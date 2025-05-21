@@ -33,7 +33,7 @@ const shotSchema = new mongoose.Schema(
       ],
     },
 
-    colorType: [
+    color: [
       {
         type: String,
         enum: [
@@ -118,7 +118,7 @@ const shotSchema = new mongoose.Schema(
       ],
     },
 
-    locationType: { type: String, enum: ["Interior", "Exterior"] },
+    interiorExterior: { type: String, enum: ["Interior", "Exterior"] },
     timeOfDay: {
       type: String,
       enum: ["Day", "Night", "Dusk", "Dawn", "Sunrise", "Sunset"],
@@ -136,7 +136,7 @@ const shotSchema = new mongoose.Schema(
       },
     ],
 
-    ageGroup: [
+    age: [
       {
         type: String,
         enum: [
