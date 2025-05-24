@@ -228,7 +228,7 @@ export const getShot = async (req, res) => {
     if (tags) filter.tags = { $in: parseArrayParam(tags) }; // Assuming tags are strings
     if (keywords) filter.keywords = { $in: parseArrayParam(keywords) };
 
-    // Handle sorting
+    // Handle sortingdf
     let sort = {};
     let query;
     switch (sortBy) {
