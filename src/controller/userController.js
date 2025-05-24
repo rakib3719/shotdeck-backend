@@ -1,4 +1,4 @@
-import { Transaction } from "../models/TransactionModel.js";
+
 import { User } from "../models/userModel.js";
 
 
@@ -122,3 +122,21 @@ export const updateAgentApprovalStatus = async (req, res) => {
         });
     }
 };
+
+export const getAllUsers = async(req, res)=>{
+
+
+    try {
+        const data = await User.find();
+        res.status(201).json({
+            message:'Sucess', 
+            data
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message:'Somethng went wrong!',
+            error
+        })
+    }
+}

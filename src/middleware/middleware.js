@@ -76,6 +76,7 @@ export const isAdmin = (req, res, next) => {
 
 
 export const decodedToken = (token) => {
+  console.log(token, 'token get sucessfully')
   try {
     return jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
   } catch (error) {

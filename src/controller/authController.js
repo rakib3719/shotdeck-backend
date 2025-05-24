@@ -138,7 +138,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, role: user?.role },
       'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6',
-      { expiresIn: '1h' }
+   
     );
 
        const isProd = process.env.NODE_ENV === "production";
@@ -209,27 +209,27 @@ export const logout = (req, res) => {
 
 
 
-export const getAllUsers = async (req, res) => {
-  try {
-    // const { mobileNumber } = req.query;
+// export const getAllUsers = async (req, res) => {
+//   try {
+//     // const { mobileNumber } = req.query;
 
-    // let filter = {};
-    // if (mobileNumber) {
-    //   filter.mobileNumber = mobileNumber;
-    // }
+//     // let filter = {};
+//     // if (mobileNumber) {
+//     //   filter.mobileNumber = mobileNumber;
+//     // }
 
-    const data = await User.find();
-    res.status(200).json({
-      success: true,
-      data: data
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Something went wrong!',
-      error
-    });
-  }
-};
+//     const data = await User.find();
+//     res.status(200).json({
+//       success: true,
+//       data: data
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: 'Something went wrong!',
+//       error
+//     });
+//   }
+// };
 
 export const getUser = async(req, res)=>{
 
