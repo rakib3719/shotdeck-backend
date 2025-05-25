@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import Shot from "../models/shotModel.js";
 import { resetPassword } from './authController.js';
+import Service from '../models/servicesModel.js';
 
 
 
@@ -385,3 +386,49 @@ export const trendingShot = async (req, res) => {
     });
   }
 };
+
+// services page
+
+export const getServices = async(req, res)=>{
+  try {
+    const data = await Service.find();
+    res.status(201).json({
+      message:'Success',
+      data
+
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+       message:'Something went wrong!',
+       error
+    })
+    
+  }
+}
+
+export const getSingleServices = async (req, res) => {
+  console.log('Hit')
+  const id = req.params.id
+  console.log(id, 'this is id')
+
+  try {
+    const data = await Service.findById(id) // better than find({ _id: id })
+    
+    if (!data) {
+      return res.status(404).json({
+        message: 'Service not found'
+      })
+    }
+
+    res.status(200).json({
+      message: 'Success',
+      data
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong!',
+      error: error.message
+    })
+  }
+}

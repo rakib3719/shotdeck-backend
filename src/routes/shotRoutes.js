@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createShot, deleteShot, getRequestedShot, getShot, statusChange, trendingShot, updateClick } from "../controller/ShotController.js";
+import { createShot, deleteShot, getRequestedShot, getServices, getShot, getSingleServices, statusChange, trendingShot, updateClick } from "../controller/ShotController.js";
 import { overView } from "../controller/overViewController.js";
 
 
@@ -17,7 +17,9 @@ router.get('/shot-request', getRequestedShot);
 router.patch('/update-status/:id', statusChange);
 router.get('/overview', overView);
 router.patch('/click/:id', updateClick);
-router.get('/treanding', trendingShot)
+router.get('/treanding', trendingShot);
+router.get('/services', getServices);
+router.get('/services/:id', getSingleServices);
 
 
 

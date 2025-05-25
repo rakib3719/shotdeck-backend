@@ -10,7 +10,8 @@ app.use(cors({
   origin: [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://shotdeck.vercel.app"
+    "https://shotdeck.vercel.app",
+    "http://localhost:5173"
     
   ],
   credentials: true
