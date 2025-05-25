@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {     login,    logout, otpVerification, register, resetPassword } from "../controller/authController.js";
 import { saveOtp } from "../controller/otpController.js";
-import { getAllUsers } from "../controller/userController.js";
+import { getAllUsers, getSingleUser } from "../controller/userController.js";
 
 
 const router = Router();
@@ -20,5 +20,6 @@ router.post('/otp-verification',otpVerification)
 router.post('/create', register)
 router.post('/reset-pass', resetPassword)
 router.get('/login', login)
+router.get('/single-user', getSingleUser)
 
 export default router

@@ -279,10 +279,23 @@ const shotSchema = new mongoose.Schema(
     set: { type: String },
     storyLocation: { type: String },
     filmingLocation: { type: String },
+    actors:{
+      type: String
+    },
+    filmStockResolution:{
+      type:String
+    }
+,
     
 
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
     keywords: [{ type: String }],
+    colorist:{
+      type:String
+    },
+    click:{
+      type:Number
+    }
   },
   { timestamps: true }
 );

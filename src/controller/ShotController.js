@@ -82,6 +82,7 @@ export const getShot = async (req, res) => {
     const {
       search,
       sortBy,
+      director,
       title,
       description,
       imageUrl,
@@ -110,7 +111,7 @@ export const getShot = async (req, res) => {
       lensType,
       lightingStyle,
       lightingType,
-      director,
+     
       cinematographer,
       productionDesigner,
       costumeDesigner,
@@ -176,7 +177,7 @@ export const getShot = async (req, res) => {
         { storyLocation: regex },
         { filmingLocation: regex },
         { keywords: regex },
-        { tags: regex }, // Assuming tags are strings
+        // { tags: regex }, // Assuming tags are strings
       ];
     }
 
@@ -225,7 +226,7 @@ export const getShot = async (req, res) => {
     if (set) filter.set = { $in: parseArrayParam(set) };
     if (storyLocation) filter.storyLocation = { $in: parseArrayParam(storyLocation) };
     if (filmingLocation) filter.filmingLocation = { $in: parseArrayParam(filmingLocation) };
-    if (tags) filter.tags = { $in: parseArrayParam(tags) }; // Assuming tags are strings
+    // if (tags) filter.tags = { $in: parseArrayParam(tags) }; // Assuming tags are strings
     if (keywords) filter.keywords = { $in: parseArrayParam(keywords) };
 
     // Handle sortingdf
@@ -324,6 +325,27 @@ export const statusChange = async(req, res)=>{
 
 
 
+export const updateClick = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const update = await Shot.updateOne(
+      { _id: id },
+      { $inc: { click: 1 } } 
+    );
+
+    res.status(200).json({
+      message: 'Click updated successfully!',
+      update,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
 
 // export const overView = async(req, res)=>{
 //   try {
@@ -336,3 +358,30 @@ export const statusChange = async(req, res)=>{
 //     })
 //   }
 // }
+
+
+
+
+
+export const trendingShot = async (req, res) => {
+  try {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1); 
+
+    const shots = await Shot.find({
+      createdAt: { $gte: oneMonthAgo },
+    })
+      .sort({ click: -1 }) 
+      .limit(12); 
+
+    res.status(200).json({
+      message: 'Trending shots retrieved successfully!',
+      data: shots,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to retrieve trending shots.',
+      error,
+    });
+  }
+};
