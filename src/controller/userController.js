@@ -186,3 +186,46 @@ export const getSingleUser = async (req, res) => {
     });
   }
 };
+
+
+
+export const updateUser = async(req, res)=>{
+    try {
+
+         const authHeader = req.headers['authorization'];
+
+    if (!authHeader || !authHeader.startsWith('Bearer')) {
+      return res.status(401).json({ message: 'Authorization header missing or malformed' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    console.log(token, 'this is token');
+
+    let userPayload;
+    try {
+      userPayload = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
+      console.log(userPayload, 'this is userPayload');
+    } catch (err) {
+        console.log('invalid token')
+      return res.status(201).json({ message: 'Invalid or expired token', error: err.message });
+    }
+
+    const findUser = await User.findById(userPayload.id);
+    if (!findUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+        const {email, name, phone} = req.body;
+        const response = await User.updateOne({_id:findUser._id}, {email:email, name:name, phone:phone || ''});
+        res.status(201).json({
+            message:'Success',
+            data: response
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message:'Something went wrong!',
+            error
+        })
+    }
+}

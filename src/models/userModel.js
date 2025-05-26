@@ -58,6 +58,10 @@ const userSchema = new mongoose.Schema({
   lastLogin: {
     type: Date
   },
+  phone:{
+    type:String
+
+  },
   verified: {
     type: Boolean,
     default: false

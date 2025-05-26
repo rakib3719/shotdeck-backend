@@ -134,7 +134,7 @@ export const getShot = async (req, res) => {
       return Array.isArray(param) ? param : param.split(',').map((item) => item.trim());
     };
 
-    const filter = {};
+    const filter = {status:'active'};
 
     // Handle search with regex
     if (search && search.trim() !== '') {

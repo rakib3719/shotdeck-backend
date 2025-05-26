@@ -320,7 +320,68 @@ export const resetPassword = async (req, res) => {
 };
 
 
+
+
+
+export const changePassword = async(req, res)=>{
+    const authHeader = req.headers['authorization'];
+  
+
+
+  try {
+    const {oldPassword, newPassword, confirmPassword} = req.body;
+    console.log('hit')
+    const authHeader = req.headers['authorization'];
+         const token = authHeader.split(' ')[1];
+        console.log(token, 'this is token');
+    
+        // if (!authHeader || !authHeader.startsWith('Bearer')) {
+        //   return res.status(401).json({ message: 'Authorization header missing or malformed' });
+        // }
+    
+        // const token = authHeader.split(' ')[1];
+        // console.log(token, 'this is token');
+    
+        let userPayload;
+       
+          userPayload = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
+          console.log(userPayload, 'this is userPayload');
+       
+    
+        const findUser = await User.findOne({_id:userPayload?.id})
+        if (!findUser) {
+          return res.status(404).json({ message: 'User not found' });
+        }
+    
+        const isMatch =await bcrypt.compare(oldPassword, findUser.password);
+        console.log(isMatch, 'isMatch')
+
+        if(!isMatch){
+          return res.status(401).json({
+            message:'Incorrect Password'
+          })
+        }
+
+       
+
+       const hashPassword =await bcrypt.hash(newPassword, 10);
+const response = await User.updateOne({ _id: findUser?._id }, { password: hashPassword });
+
+       res.status(201).json({
+        message:'Password Update Successfully',
+        data:response
+       })
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      message:'Something went wrong!',
+    error    })
+  }
+}
+
 // export const getUserController = async (req, res) => {
+
 
 
 
@@ -343,7 +404,7 @@ export const resetPassword = async (req, res) => {
 //     if (!decoded) {
 //       return res.status(401).json({
 //         success: false,
-//         message: 'Invalid token'
+//         message: ' '
 //       });
 //     }
 
