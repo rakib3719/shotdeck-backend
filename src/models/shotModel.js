@@ -4,7 +4,7 @@ const shotSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String },
-    imageUrl: { type: String, required: true },
+    imageUrl: { type: String },
     youtubeLink: { type: String },
 
     gallery: [{ type: String }],
@@ -286,6 +286,15 @@ const shotSchema = new mongoose.Schema(
       type:String
     }
 ,
+
+email:{
+  type:String,
+  required:true
+},
+userId:{
+  type:String,
+  required:true
+},
     
 
     tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],

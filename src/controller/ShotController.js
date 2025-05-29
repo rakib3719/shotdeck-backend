@@ -2,6 +2,9 @@ import jwt from 'jsonwebtoken'
 import Shot from "../models/shotModel.js";
 import { resetPassword } from './authController.js';
 import Service from '../models/servicesModel.js';
+import { User } from '../models/userModel.js';
+import { use } from 'react';
+
 
 
 
@@ -12,43 +15,47 @@ import Service from '../models/servicesModel.js';
 export const createShot = async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'No token provided' });
-    }
+    const token = authHeader && authHeader.startsWith('Bearer ')
+      ? authHeader.split(' ')[1]
+      : null;
 
-    const token = authHeader.split(' ')[1];
-    let user;
+    let user = null;
+    let email = 'Unknown';
+    let userId = 'null';
 
-    try {
-      user = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
-      console.log(user, 'user atat')
-    } catch (err) {
-      return res.status(403).json({ message: 'Invalid token', err });
+    if (token) {
+      try {
+        user = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
+        const foundUser = await User.findById(user.id);
+
+        if (foundUser) {
+          email = foundUser.email || 'Unknown';
+          userId = foundUser._id || 'null';
+        }
+      } catch (err) {
+        return res.status(403).json({ message: 'Invalid token', error: err.message });
+      }
     }
 
     const data = req.body;
-  data.status = user.role === 'admin' ? "active" : "pending";
+    data.status = user?.role === 'admin' ? 'active' : 'pending';
+    data.email = email;
+    data.userId = userId;
 
-  
-
-if(user){
-      const resp = await Shot.create(data);
-      return res.status(201).json({
+    const resp = await Shot.create(data);
+    return res.status(201).json({
       message: 'Shot created successfully',
-      data: resp
+      data: resp,
     });
-}
-
-    
-
   } catch (error) {
     console.error('Shot creation error:', error.message);
     return res.status(500).json({
       message: 'Something went wrong',
-      error: error.message 
+      error: error.message,
     });
   }
 };
+
 
   
 
@@ -80,6 +87,8 @@ export const deleteShot = async(req, res)=>{
 
 export const getShot = async (req, res) => {
   try {
+
+ 
     const {
       search,
       sortBy,
@@ -128,6 +137,10 @@ export const getShot = async (req, res) => {
       tags,
       keywords,
     } = req.query;
+
+          const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 50;
+    const skip = (page - 1) * limit;
 
     const parseArrayParam = (param) => {
       if (!param) return [];
@@ -236,15 +249,15 @@ export const getShot = async (req, res) => {
     switch (sortBy) {
       case 'releaseDateDesc':
         sort = { releaseYear: -1 }; 
-        query = Shot.find(filter).sort(sort);
+        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
         break;
       case 'releaseDateAsc':
         sort = { releaseYear: 1 }; 
-        query = Shot.find(filter).sort(sort);
+        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
         break;
       case 'recentlyAdded':
         sort = { createdAt: -1 }; 
-        query = Shot.find(filter).sort(sort);
+        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
         break;
       case 'random':
         query = Shot.aggregate([
@@ -254,11 +267,11 @@ export const getShot = async (req, res) => {
         break;
       case 'alphabetical':
         sort = { title: 1 }; 
-        query = Shot.find(filter).sort(sort);
+        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
         break;
       default:
         sort = { createdAt: -1 }; 
-        query = Shot.find(filter).sort(sort);
+        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
     }
 
     // console.log(filter, 'this is filter');
@@ -431,4 +444,45 @@ export const getSingleServices = async (req, res) => {
       error: error.message
     })
   }
+};
+
+
+
+export const getShotById = async(req, res)=>{
+  try {
+    
+         const authHeader = req.headers['authorization'];
+    
+        if (!authHeader || !authHeader.startsWith('Bearer')) {
+          return res.status(401).json({ message: 'Authorization header missing or malformed' });
+        }
+    
+        const token = authHeader.split(' ')[1];
+        console.log(token, 'this is token');
+    
+        let userPayload;
+        try {
+          userPayload = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
+          console.log(userPayload, 'this is userPayload');
+        } catch (err) {
+            console.log('invalid token')
+          return res.status(201).json({ message: 'Invalid or expired token', error: err.message });
+        }
+
+        const data = await Shot.find({userId:userPayload.id});
+        
+    res.status(200).json({
+      message: 'Trending shots retrieved successfully!',
+      data,
+    });
+
+  } catch (error) {
+    
+    res.status(500).json({
+      message:'Sucess',
+      error
+    })
+  }
 }
+
+

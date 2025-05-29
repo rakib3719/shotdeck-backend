@@ -18,6 +18,16 @@ export const register = async (req, res) => {
       });
     }
 
+
+    const isExist = await User.findOne({email: email});
+
+    if(isExist){
+      return res.status(500).json({
+        message:'Email Already Exist'
+        
+      })
+    }
+
    
 
   

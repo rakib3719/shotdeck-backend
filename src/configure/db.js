@@ -8,7 +8,7 @@ const connectDB = async()=>{
 
 
 try {
-    const connect = await mongoose.connect(process.env.MONGO_URI, {
+    const connect = await mongoose.connect('mongodb+srv://shotdeck:WmzpbIAxLrR8gyYL@cluster0.5sfxlm2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
         dbName: 'shotdeck', 
       });
    console.log(`moongdo db connected `);

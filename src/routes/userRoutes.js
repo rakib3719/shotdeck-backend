@@ -2,6 +2,7 @@ import { Router } from "express";
 import {     changePassword, login,    logout, otpVerification, register, resetPassword } from "../controller/authController.js";
 import { saveOtp } from "../controller/otpController.js";
 import { getAllUsers, getSingleUser, updateUser } from "../controller/userController.js";
+import { isAdmin, verifyToken } from "../middleware/middleware.js";
 
 
 const router = Router();
@@ -10,7 +11,7 @@ const router = Router();
 
 
 
-router.get('/',  getAllUsers)
+router.get('/',verifyToken,isAdmin,  getAllUsers)
 
 // router.get('/getUserOne', getUserController)
 router.post('/login', login)
