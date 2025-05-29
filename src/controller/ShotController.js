@@ -483,6 +483,27 @@ export const getShotById = async(req, res)=>{
       error
     })
   }
+};
+
+
+
+export const shotCount = async(req, res)=>{
+  try {
+    const data =await Shot.countDocuments({status:'active'});
+    res.status(201).json({
+      message:'Success',
+      count:data
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+
+      message:'Something Went Wrong!',
+      error
+   
+    })
+    
+  }
 }
 
 

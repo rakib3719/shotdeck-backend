@@ -6,22 +6,22 @@ import mainRouter from './routes/index.js';
 export const app = express();
 
 
-// app.use(cors({
-//   origin: [
-//     "http://localhost:3000",
-//     "http://localhost:3001",
-//     "https://shotdeck.vercel.app",
-//     "http://localhost:5173",
-//     "https://marhaba-psi.vercel.app",
-//     "http://192.168.250.3:3000"
-    
-    
-//   ],
-//   credentials: true
-// }));
 app.use(cors({
-  origin: "*"
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://shotdeck.vercel.app",
+    "http://localhost:5173",
+    "https://marhaba-psi.vercel.app",
+
+    
+    
+  ],
+  credentials: true
 }));
+// app.use(cors({
+//   origin: "*"
+// }));
 
 
 app.use(express.json()); 
