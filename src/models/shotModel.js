@@ -295,9 +295,58 @@ userId:{
   type:String,
   required:true
 },
-    
 
-    tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+
+tags:{
+  type:[String]
+},
+    
+focalLength:{
+  type:[String]
+},
+
+lightingConditions:{
+type:[String]
+},
+videoType:{
+type:[String]
+},
+referenceType:{
+type:[String]
+},
+ videoSpeed:{
+type:[String]
+},
+ videoQuality:{
+type:[String]
+},
+simulationSize:{
+type:[String]
+},
+simulationSoftware:{
+type:[String]
+},
+
+simulationStyle:{
+  type:[String]
+},
+motionStyle:{
+  type:[String]
+},
+emitterSpeed:{
+   type:[String]
+},
+simulatorTypes:{
+  type:{}
+},
+
+
+
+
+
+
+
+    // tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
     keywords: [{ type: String }],
     colorist:{
       type:String
@@ -311,3 +360,11 @@ userId:{
 
 const Shot = mongoose.models.Shot || mongoose.model("Shot", shotSchema);
 export default Shot;
+
+
+// //     focalLength: [],
+//     lightingConditions: [],
+//     videoType: [],
+//     referenceType: [],
+//     videoSpeed: [],
+//     videoQuality: []
