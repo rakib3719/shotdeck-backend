@@ -82,3 +82,18 @@ userSchema.index({ primaryIndustry: 1 });
 userSchema.index({ primaryOccupation: 1 });
 
 export const User = mongoose.model('User', userSchema);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

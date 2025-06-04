@@ -1,50 +1,102 @@
 import Collection from "../models/collectionModel.js";
+import CollectionName from "../models/collectionNameModal.js";
 import { User } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-export const createCollection = async(req,res)=>{
 
-    console.log('first huy')
-       const authHeader = req.headers['authorization'];
-         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-           return res.status(401).json({ message: 'No token provided' });
-         }
-     
-         const token = authHeader.split(' ')[1];
-         console.log(token , 'This is token')
+
+
+
+
+export const createCollection = async (req, res) => {
     try {
+        // Authentication check
+        const authHeader = req.headers['authorization'];
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ success: false, message: 'No token provided' });
+        }
+
+        const token = authHeader.split(' ')[1];
         
-       const authHeader = req.headers['authorization'];
-         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-           return res.status(401).json({ message: 'No token provided' });
-         }
-     
-         const token = authHeader.split(' ')[1];
-         let user;
-     
- 
-           user = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
-           console.log(user, 'user atat')
-       
-         const data = req.body;
-      
-     
-       const findUser = await User.findById(user.id);
-       data.email = findUser.email;
-       data.userId = findUser._id;
-     
+        // Verify token
+        const decoded = jwt.verify(token, 'Uj3f#kLx8@wZ92!gR4cF^eYqT1Nv$BmP7sHq0Ld9Vx*MzKa6');
+        
+        // Check if the user making the request matches the userId in the request
+        if (decoded.id !== req.body.userId) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Unauthorized - userId mismatch' 
+            });
+        }
 
+        // Extract data from request body
+        const { 
+            collectionName: currentClc, 
+            data: currentShotForCollections, 
+            shotId, 
+            userId: Userid 
+        } = req.body;
 
-        const resp = await Collection.create(data);
+        // Validate required fields
+        if (!currentClc || !currentShotForCollections || !shotId || !Userid) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Missing required fields: collectionName, data, shotId, or userId' 
+            });
+        }
+
+        // Check if the shot already exists in this collection
+        const existingItem = await Collection.findOne({
+            userId: Userid,
+            collectionName: currentClc,
+            shotId: shotId
+        });
+
+        if (existingItem) {
+            return res.status(409).json({
+                success: false,
+                message: 'This shot already exists in the collection',
+                data: existingItem
+            });
+        }
+
+        // Create new collection item
+        const newCollectionItem = await Collection.create({
+            userId: Userid,
+            collectionName: currentClc,
+            shotId: shotId,
+            data: currentShotForCollections
+        });
+
         res.status(201).json({
-      message: 'Shot created successfully',
-      data: resp})
-    } catch (error) {
-        
-        res.status(500).json({
-            message:'Something went wrong!',
-            error
+            success: true,
+            message: 'Shot added to collection successfully',
+            data: newCollectionItem
+        });
 
-        })
+    } catch (error) {
+        console.error('Error adding to collection:', error);
+        
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation error',
+                error: error.message
+            });
+        }
+        
+        if (error.code === 11000) {
+            return res.status(409).json({
+                success: false,
+                message: 'Duplicate entry detected',
+                error: error.keyValue
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 };
 
@@ -52,7 +104,7 @@ export const createCollection = async(req,res)=>{
 export const getCollection = async (req, res) => {
   try {
     const id = req.params.id;
-    const data = await Collection.find({ userId: id }); 
+    const data = await CollectionName.find({ userId: id }); 
 
     res.status(200).json({
       message: 'Success',
@@ -85,3 +137,54 @@ export const deleteCollection = async(req, res)=>{
         })
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+export const saveCollection = async (req, res) => {
+  try {
+    const data = req.body;
+    const resp = await CollectionName.create(data);
+    res.status(201).json({
+      message: 'Success',
+      data: resp
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong!',
+      error
+    });
+  }
+}
+
+
+
+
+
+
+
+export const getCollectionSingle = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const data = await Collection.find({ userId: id }); 
+
+    res.status(200).json({
+      message: 'Success',
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong!',
+      error: error.message || error,
+    });
+  }
+};
+
+

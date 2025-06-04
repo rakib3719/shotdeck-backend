@@ -136,12 +136,10 @@ const shotSchema = new mongoose.Schema(
       // enum: ["None", "1", "2", "3", "4", "5", "6+"],
     },
 
-    gender: [
-      {
-        type: String,
-
-      },
-    ],
+    gender: 
+        {
+          type: [String]
+        },
 
     age: [
       {
@@ -339,6 +337,8 @@ emitterSpeed:{
 simulatorTypes:{
   type:{}
 },
+  timecodes:[],
+  thumbnailTimecode:[],
 
 
 

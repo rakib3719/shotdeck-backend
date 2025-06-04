@@ -7,6 +7,9 @@ const collectionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  collectionName:{
+    type:String
+  },
 
   shotId:{
     type:String,

@@ -84,14 +84,12 @@ export const deleteShot = async(req, res)=>{
       return Array.isArray(param) ? param : param.split(',');
     };
 
-
 export const getShot = async (req, res) => {
   try {
-
- 
     const {
       search,
       sortBy,
+      // Basic filters
       director,
       title,
       description,
@@ -121,7 +119,8 @@ export const getShot = async (req, res) => {
       lensType,
       lightingStyle,
       lightingType,
-     
+      particles,
+      // Crew filters
       cinematographer,
       productionDesigner,
       costumeDesigner,
@@ -135,10 +134,23 @@ export const getShot = async (req, res) => {
       storyLocation,
       filmingLocation,
       tags,
+      // New FX filters
+      rigidbodies,
       keywords,
+      softBodies,
+      clothgroom,
+      magicAbstract,
+      crowd,
+      mechanicsTech,
+      compositing,
+      simulationSize,
+      simulationStyle,
+      motionStyle,
+      emitterSpeed,
+      simulationSoftware
     } = req.query;
 
-          const page = parseInt(req.query.page) || 1;
+    const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
 
@@ -147,7 +159,7 @@ export const getShot = async (req, res) => {
       return Array.isArray(param) ? param : param.split(',').map((item) => item.trim());
     };
 
-    const filter = {status:'active'};
+    const filter = { status: 'active' };
 
     // Handle search with regex
     if (search && search.trim() !== '') {
@@ -191,14 +203,23 @@ export const getShot = async (req, res) => {
         { storyLocation: regex },
         { filmingLocation: regex },
         { keywords: regex },
-        // { tags: regex }, // Assuming tags are strings
+        { particles: regex },
+        { rigidbodies: regex },
+        { softBodies: regex },
+        { clothgroom: regex },
+        { magicAbstract: regex },
+        { crowd: regex },
+        { mechanicsTech: regex },
+        { compositing: regex },
+        { simulationSize: regex },
+        { simulationStyle: regex },
+        { motionStyle: regex },
+        { emitterSpeed: regex },
+        { simulationSoftware: regex }
       ];
     }
 
     // Apply other filters
-    if(opticalFormat){
-      console.log(opticalFormat, 'this is optical format')
-    }
     if (title) filter.title = title;
     if (description) filter.description = description;
     if (imageUrl) filter.imageUrl = imageUrl;
@@ -240,43 +261,50 @@ export const getShot = async (req, res) => {
     if (set) filter.set = { $in: parseArrayParam(set) };
     if (storyLocation) filter.storyLocation = { $in: parseArrayParam(storyLocation) };
     if (filmingLocation) filter.filmingLocation = { $in: parseArrayParam(filmingLocation) };
-    // if (tags) filter.tags = { $in: parseArrayParam(tags) }; // Assuming tags are strings
     if (keywords) filter.keywords = { $in: parseArrayParam(keywords) };
+    if (simulationSize) filter.simulationSize = { $in: parseArrayParam(simulationSize) };
+    if (simulationStyle) filter.simulationStyle = { $in: parseArrayParam(simulationStyle) };
+    
+    if (motionStyle) filter.motionStyle = { $in: parseArrayParam(motionStyle) };
+    if (emitterSpeed) filter.emitterSpeed = { $in: parseArrayParam(emitterSpeed) };
+    if (simulationSoftware) filter.simulationSoftware = { $in: parseArrayParam(simulationSoftware) };
+    
+    // New FX filters
+    if (particles) filter['simulatorTypes.particles'] = { $in: parseArrayParam(particles) };
+    if (rigidbodies) filter['simulatorTypes.rigidbodies'] = { $in: parseArrayParam(rigidbodies) };
+    if (softBodies) filter['simulatorTypes.softBodies'] = { $in: parseArrayParam(softBodies) };
+    if (clothgroom) filter['simulatorTypes.clothgroom'] = { $in: parseArrayParam(clothgroom) };
+    if (magicAbstract) filter['simulatorTypes.magicAbstract'] = { $in: parseArrayParam(magicAbstract) };
+    if (crowd) filter['simulatorTypes.crowd'] = { $in: parseArrayParam(crowd) };
+    if (mechanicsTech) filter['simulatorTypes.mechanicsTech'] = { $in: parseArrayParam(mechanicsTech) };
+    if (compositing) filter['simulatorTypes.compositing'] = { $in: parseArrayParam(compositing) };
 
-    // Handle sortingdf
-    let sort = {};
+    // Handle sorting
     let query;
     switch (sortBy) {
       case 'releaseDateDesc':
-        sort = { releaseYear: -1 }; 
-        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
+        query = Shot.find(filter).sort({ releaseYear: -1 }).skip(skip).limit(limit);
         break;
       case 'releaseDateAsc':
-        sort = { releaseYear: 1 }; 
-        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
+        query = Shot.find(filter).sort({ releaseYear: 1 }).skip(skip).limit(limit);
         break;
       case 'recentlyAdded':
-        sort = { createdAt: -1 }; 
-        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
+        query = Shot.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
         break;
       case 'random':
         query = Shot.aggregate([
           { $match: filter },
-          { $sample: { size: 100 } }, 
+          { $sample: { size: limit } },
+          { $skip: skip },
+          { $limit: limit }
         ]);
         break;
       case 'alphabetical':
-        sort = { title: 1 }; 
-        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
+        query = Shot.find(filter).sort({ title: 1 }).skip(skip).limit(limit);
         break;
       default:
-        sort = { createdAt: -1 }; 
-        query = Shot.find(filter).sort(sort).skip(skip).limit(limit);;
+        query = Shot.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
     }
-
-    // console.log(filter, 'this is filter');
-    // console.log(sortBy, 'this is sortBy');
-    // console.log(sort, 'this is sort');
 
     const resp = await query;
 
@@ -292,7 +320,6 @@ export const getShot = async (req, res) => {
     });
   }
 };
-
 
 
 export const getRequestedShot = async(req, res)=>{
