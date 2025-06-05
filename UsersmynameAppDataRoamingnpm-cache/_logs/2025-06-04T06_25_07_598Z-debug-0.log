@@ -11,3 +11,9 @@
 10 verbose logfile C:\project\SHOTDECK\backend\UsersmynameAppDataRoamingnpm-cache\_logs\2025-06-04T06_25_07_598Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
+13 verbose cwd C:\project\SHOTDECK\backend
+14 verbose os Windows_NT 10.0.26100
+15 verbose node v22.15.1
+16 verbose npm  v10.9.2
+17 verbose exit -1073741510
+18 verbose code -1073741510
