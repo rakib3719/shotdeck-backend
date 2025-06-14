@@ -27,4 +27,4 @@ COPY . .
 # EXPOSE 3000
 
 # ---- Default Command ----
-CMD ["node", "server.js"]
+CMD ["node", "src/server.js"]
