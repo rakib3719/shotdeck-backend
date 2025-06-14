@@ -13,9 +13,8 @@
     "start": "node src/server.js",
 
     "dev": "nodemon src/server.js",
-    
-     "postinstall": "curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o yt-dlp && chmod +x yt-dlp && curl -L https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz | tar -xJ --strip-components=1 -C ."
 
+    "postinstall": "curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o yt-dlp && chmod +x yt-dlp"
 
   },
 
@@ -36,6 +35,8 @@
     "dotenv": "^16.5.0",
 
     "express": "^5.1.0",
+
+    "ffmpeg-static": "^5.2.0",
 
     "jsonwebtoken": "^9.0.2",
 

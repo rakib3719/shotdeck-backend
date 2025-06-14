@@ -1,20 +1,30 @@
-# ---- base image ----
+# ---- Base Image ----
 FROM node:20-bookworm-slim
 
-# ---- system deps ----
+# ---- Install System Dependencies ----
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      ffmpeg curl ca-certificates \
+      ffmpeg curl ca-certificates xz-utils gnupg \
  && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
       -o /usr/local/bin/yt-dlp \
  && chmod +x /usr/local/bin/yt-dlp \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-# ---- app ----
+# ---- Set Working Directory ----
 WORKDIR /app
+
+# ---- Copy Dependency Files ----
 COPY package*.json ./
+
+# ---- Install Dependencies ----
 RUN npm ci --omit=dev
+
+# ---- Copy Source Code ----
 COPY . .
 
-CMD ["node","index.js"]
+# ---- Expose Port (optional if needed) ----
+# EXPOSE 3000
+
+# ---- Default Command ----
+CMD ["node", "index.js"]
