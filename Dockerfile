@@ -1,14 +1,20 @@
-FROM node:18
+# ---- base image ----
+FROM node:20-bookworm-slim
 
-# Install Python, pip, ffmpeg, curl (required dependencies)
-RUN apt-get update && apt-get install -y python3 python3-pip ffmpeg curl
+# ---- system deps ----
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      ffmpeg curl ca-certificates \
+ && curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+      -o /usr/local/bin/yt-dlp \
+ && chmod +x /usr/local/bin/yt-dlp \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-# Install yt-dlp using pip
-RUN pip3 install yt-dlp
-
+# ---- app ----
 WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
 COPY . .
 
-RUN npm install
-
-CMD ["node", "index.js"]
+CMD ["node","index.js"]

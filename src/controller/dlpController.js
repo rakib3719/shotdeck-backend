@@ -15,7 +15,8 @@ export const getScreenshot = (req, res) => {
   const tempDir = tmp.dirSync({ unsafeCleanup: true });
   const outputImage = path.join(tempDir.name, 'thumb.jpg');
 
-  const ytdlCmd = `yt-dlp -f worst -g "${cleanUrl}"`;
+const ytdlCmd = `yt-dlp -f worst -g "${cleanUrl}"`;
+
 
   exec(ytdlCmd, (err, stdout) => {
     if (err) {
