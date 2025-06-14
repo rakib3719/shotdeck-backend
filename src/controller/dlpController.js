@@ -1,24 +1,22 @@
-import { exec } from 'child_process';
-import path from 'path';
-import fs from 'fs';
+import { exec } from 'node:child_process';
+import path from 'node:path';
+import fs from 'node:fs';
 import tmp from 'tmp';
-import ffmpegPath from 'ffmpeg-static';
+import ffmpegPath from 'ffmpeg-static';        // ✓ bundled ffmpeg
 
 export const getScreenshot = (req, res) => {
-  const url = req.query.url;
-  const timestamp = req.query.timestamp;
+  const { url, timestamp } = req.query;
 
   if (!url || !timestamp) {
     return res.status(400).json({ error: 'url and timestamp are required' });
   }
 
-  const cleanUrl = url.split('?')[0];
-  const tempDir = tmp.dirSync({ unsafeCleanup: true });
-  const outputImage = path.join(tempDir.name, 'thumb.jpg');
+  const cleanUrl   = url.split('?')[0];
+  const tempDir    = tmp.dirSync({ unsafeCleanup: true });
+  const outputPath = path.join(tempDir.name, 'thumb.jpg');
 
-const ytdlCmd = `./yt-dlp -f worst -g "${cleanUrl}"`;
-
-
+  // yt‑dlp was installed into /usr/local/bin by the Dockerfile → in $PATH
+  const ytdlCmd = `yt-dlp -f worst -g "${cleanUrl}"`;
 
   exec(ytdlCmd, (err, stdout) => {
     if (err) {
@@ -26,23 +24,21 @@ const ytdlCmd = `./yt-dlp -f worst -g "${cleanUrl}"`;
       return res.status(500).json({ error: 'yt-dlp failed', details: err.message });
     }
 
-    const videoStreamURL = stdout.trim();
-    const ffmpegCmd = `${ffmpegPath} -ss ${timestamp} -i "${videoStreamURL}" -frames:v 1 -q:v 2 "${outputImage}" -y`;
-    // const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoStreamURL}" -frames:v 1 -q:v 2 "${outputImage}" -y`;
-    // const ffmpegCmd = `./ffmpeg -ss ${timestamp} -i "${videoStreamURL}" -frames:v 1 -q:v 2 "${outputImage}" -y`;
-
+    const videoURL  = stdout.trim();
+    const ffmpegCmd =
+      `${ffmpegPath} -ss ${timestamp} -i "${videoURL}" -frames:v 1 -q:v 2 "${outputPath}" -y`;
 
     exec(ffmpegCmd, (err) => {
-      if (err || !fs.existsSync(outputImage)) {
+      if (err || !fs.existsSync(outputPath)) {
         tempDir.removeCallback();
         return res.status(500).json({ error: 'ffmpeg failed', details: err?.message });
       }
 
-      const imageBuffer = fs.readFileSync(outputImage);
+      const img = fs.readFileSync(outputPath);
       tempDir.removeCallback();
 
       res.set('Content-Type', 'image/jpeg');
-      return res.status(200).send(imageBuffer);
+      res.status(200).send(img);
     });
   });
 };
