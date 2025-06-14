@@ -26,6 +26,8 @@ const ytdlCmd = `yt-dlp -f worst -g "${cleanUrl}"`;
 
     const videoStreamURL = stdout.trim();
     const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoStreamURL}" -frames:v 1 -q:v 2 "${outputImage}" -y`;
+    // const ffmpegCmd = `./ffmpeg -ss ${timestamp} -i "${videoStreamURL}" -frames:v 1 -q:v 2 "${outputImage}" -y`;
+
 
     exec(ffmpegCmd, (err) => {
       if (err || !fs.existsSync(outputImage)) {
