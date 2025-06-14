@@ -331,6 +331,9 @@ simulationStyle:{
 motionStyle:{
   type:[String]
 },
+imageUrlThubnail:{
+type:[String]
+},
 emitterSpeed:{
    type:[String]
 },

@@ -4,6 +4,7 @@ import { overView } from "../controller/overViewController.js";
 import { createCollection, deleteCollection, getCollection } from "../controller/collectionController.js";
 import { isAdmin, verifyToken } from "../middleware/middleware.js";
 import { getSettings, updateSetting } from "../controller/settingController.js";
+import { getScreenshot } from "../controller/dlpController.js";
 
 
 
@@ -30,6 +31,7 @@ router.delete('/collection/:id', deleteCollection);
 router.patch('/website', updateSetting);
 router.get('/website', getSettings);
 router.get('/shot-count', shotCount);
+router.get('/dlp', getScreenshot)
 
 
 
