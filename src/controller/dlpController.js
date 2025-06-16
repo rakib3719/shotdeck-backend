@@ -3,8 +3,11 @@ import path from 'node:path';
 import fs from 'node:fs';
 import tmp from 'tmp';
 
+
 // Adjust this to the actual path of your .txt cookie file
-const cookiesTxtPath = path.resolve('./www.youtube.com_cookies.txt');
+// const cookiesTxtPath = path.resolve('./www.youtube.com_cookies.txt');
+const cookiesTxtPath = path.resolve('www.youtube.com_cookies.txt');
+console.log(cookiesTxtPath, 'this is txt')
 
 /** GET /screenshot?url=<yt>&timestamp=00:00:05 */
 export const getScreenshot = (req, res) => {
