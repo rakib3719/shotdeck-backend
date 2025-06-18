@@ -91,6 +91,7 @@ export const getShot = async (req, res) => {
       sortBy,
       // Basic filters
       director,
+      focalLength,
       title,
       description,
       imageUrl,
@@ -147,7 +148,12 @@ export const getShot = async (req, res) => {
       simulationStyle,
       motionStyle,
       emitterSpeed,
-      simulationSoftware
+      simulationSoftware,
+      lightingConditions,
+      videoType,
+      referenceType,
+      videoSpeed,
+      videoQuality
     } = req.query;
 
     const page = parseInt(req.query.page) || 1;
@@ -215,10 +221,18 @@ export const getShot = async (req, res) => {
         { simulationStyle: regex },
         { motionStyle: regex },
         { emitterSpeed: regex },
-        { simulationSoftware: regex }
+        { simulationSoftware: regex },
+        { focalLength: regex },
+        { lightingConditions: regex },
+        { videoType: regex },
+        {referenceType: regex },
+        {videoSpeed: regex },
+    
+        {videoQuality: regex },
+    
       ];
     }
-
+console.log(parseArrayParam(focalLength), 'hea ami focal length')
     // Apply other filters
     if (title) filter.title = title;
     if (description) filter.description = description;
@@ -227,6 +241,12 @@ export const getShot = async (req, res) => {
     if (gallery) filter.gallery = { $in: parseArrayParam(gallery) };
     if (mediaType) filter.mediaType = { $in: parseArrayParam(mediaType) };
     if (genre) filter.genre = { $in: parseArrayParam(genre) };
+    if (focalLength) filter.focalLength = { $in: parseArrayParam(focalLength) };
+    if (lightingConditions) filter.lightingConditions = { $in: parseArrayParam(lightingConditions) };
+    if (videoType) filter.videoType = { $in: parseArrayParam(videoType) };
+    if (videoQuality) filter.videoType = { $in: parseArrayParam(videoQuality) };
+    if (referenceType) filter.referenceType = { $in: parseArrayParam(referenceType) };
+    if (videoSpeed) filter.videoSpeed = { $in: parseArrayParam(videoSpeed) };
     if (releaseYear) filter.releaseYear = releaseYear;
     if (timePeriod) filter.timePeriod = { $in: parseArrayParam(timePeriod) };
     if (color) filter.color = { $in: parseArrayParam(color) };
@@ -279,6 +299,7 @@ export const getShot = async (req, res) => {
     if (mechanicsTech) filter['simulatorTypes.mechanicsTech'] = { $in: parseArrayParam(mechanicsTech) };
     if (compositing) filter['simulatorTypes.compositing'] = { $in: parseArrayParam(compositing) };
 
+
     // Handle sorting
     let query;
     switch (sortBy) {
@@ -307,6 +328,7 @@ export const getShot = async (req, res) => {
     }
 
     const resp = await query;
+
 
     res.status(200).json({
       message: 'Success',

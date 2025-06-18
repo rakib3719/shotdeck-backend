@@ -340,8 +340,30 @@ emitterSpeed:{
 simulatorTypes:{
   type:{}
 },
+focalLength: {
+  type: []
+},
+lightingConditions:{
+  type:[]
+},
+videoType:{
+  type:[]
+},
+referenceType:{
+  type:[]
+},
+
+videoSpeed:{
+  type:[]
+},
+
+videoQuality:{
+  type:[]
+},
   timecodes:[],
   thumbnailTimecode:[],
+
+
 
 
 
