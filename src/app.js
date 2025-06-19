@@ -15,7 +15,8 @@ app.use(cors({
     "https://marhaba-psi.vercel.app",
     "https://shotdeck-production.up.railway.app",
     "https://shotdeck-production-f69b.up.railway.app",
-    "https://shotdeck.onrender.com"
+    "https://shotdeck.onrender.com",
+    "http://31.97.156.58:3000"
 
     
     
