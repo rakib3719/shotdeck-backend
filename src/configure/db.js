@@ -37,7 +37,7 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const connect = await mongoose.connect(
-      "mongodb://shotdeck:shotdeckyekah564@31.97.156.58:27017/shotdeck?authSource=admin",
+      "mongodb://shotdeck:shotdeckyekah564@31.97.156.58:27017",
       {
         dbName: 'shotdeck',
       }
