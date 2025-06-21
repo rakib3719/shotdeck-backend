@@ -20,8 +20,8 @@ app.use(cors({
     "http://fx-references.com:3000",
     "http://fx-references.com",
     "https://fx-references.com:3000",
-    "https://fx-references.com",
-    "http://31.97.156.58"
+    "http://31.97.156.58",
+    "https://fx-references.com"
 
     
     
