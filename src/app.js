@@ -5,19 +5,30 @@ import mainRouter from './routes/index.js';
 
 export const app = express();
 
-
-app.use(cors({
-  origin: [
-      'https://fx-references.com',
+const allowedOrigins = [
+  'https://fx-references.com',
   'http://fx-references.com',
   'https://www.fx-references.com',
   'http://www.fx-references.com',
+  'http://localhost:3000',
+  'http://31.97.156.58:3000',
+  'https://31.97.156.58:3000'
+  // চাইলে আরও add করো
+];
 
-    
-    
-  ],
-  credentials: true
-}));
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('❌ Blocked CORS for origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 // app.use(cors({
 //   origin: "*"
 // }));
