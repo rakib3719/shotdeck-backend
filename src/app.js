@@ -12,7 +12,8 @@ const allowedOrigins = [
   'http://www.fx-references.com',
   'http://localhost:3000',
   'http://31.97.156.58:3000',
-  'https://31.97.156.58:3000'
+  'https://31.97.156.58:3000',
+  'http://31.97.156.58:3000/'
   // চাইলে আরও add করো
 ];
 
