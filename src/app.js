@@ -8,20 +8,10 @@ export const app = express();
 
 app.use(cors({
   origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://shotdeck.vercel.app",
-    "http://localhost:5173",
-    "https://marhaba-psi.vercel.app",
-    "https://shotdeck-production.up.railway.app",
-    "https://shotdeck-production-f69b.up.railway.app",
-    "https://shotdeck.onrender.com",
-    "http://31.97.156.58:3000",
-    "http://fx-references.com:3000",
-    "http://fx-references.com",
-    "https://fx-references.com:3000",
-    "http://31.97.156.58",
-    "https://fx-references.com"
+      'https://fx-references.com',
+  'http://fx-references.com',
+  'https://www.fx-references.com',
+  'http://www.fx-references.com',
 
     
     
