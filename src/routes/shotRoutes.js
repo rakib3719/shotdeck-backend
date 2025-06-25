@@ -5,6 +5,7 @@ import { createCollection, deleteCollection, getCollection } from "../controller
 import { isAdmin, verifyToken } from "../middleware/middleware.js";
 import { getSettings, updateSetting } from "../controller/settingController.js";
 import { getScreenshot } from "../controller/dlpController.js";
+import { getScreenshotForVimeo } from "../controller/dlpVImeoController.js";
 
 
 
@@ -32,6 +33,7 @@ router.patch('/website', updateSetting);
 router.get('/website', getSettings);
 router.get('/shot-count', shotCount);
 router.get('/dlp', getScreenshot)
+router.get('/dlpv', getScreenshotForVimeo )
 
 
 
