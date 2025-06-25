@@ -141,6 +141,9 @@ export const getShot = async (req, res) => {
       softBodies,
       clothgroom,
       magicAbstract,
+      pyroVolumetrics,
+      LiquidsFluids,
+
       crowd,
       mechanicsTech,
       compositing,
@@ -214,6 +217,9 @@ export const getShot = async (req, res) => {
         { softBodies: regex },
         { clothgroom: regex },
         { magicAbstract: regex },
+        { pyroVolumetrics: regex },
+        { LiquidsFluids: regex },
+
         { crowd: regex },
         { mechanicsTech: regex },
         { compositing: regex },
@@ -295,9 +301,12 @@ console.log(parseArrayParam(focalLength), 'hea ami focal length')
     if (softBodies) filter['simulatorTypes.softBodies'] = { $in: parseArrayParam(softBodies) };
     if (clothgroom) filter['simulatorTypes.clothgroom'] = { $in: parseArrayParam(clothgroom) };
     if (magicAbstract) filter['simulatorTypes.magicAbstract'] = { $in: parseArrayParam(magicAbstract) };
+    if (pyroVolumetrics) filter['simulatorTypes.pyroVolumetrics'] = { $in: parseArrayParam(pyroVolumetrics) };
+    if (LiquidsFluids) filter['simulatorTypes.LiquidsFluids'] = { $in: parseArrayParam(LiquidsFluids) };
     if (crowd) filter['simulatorTypes.crowd'] = { $in: parseArrayParam(crowd) };
     if (mechanicsTech) filter['simulatorTypes.mechanicsTech'] = { $in: parseArrayParam(mechanicsTech) };
     if (compositing) filter['simulatorTypes.compositing'] = { $in: parseArrayParam(compositing) };
+
 
 
     // Handle sorting
