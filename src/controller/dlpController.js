@@ -3,12 +3,8 @@ import path from 'node:path';
 import fs from 'node:fs';
 import tmp from 'tmp';
 
-/**
- * Your raw cookies string copied directly from the .txt file.
- * Keep the exact Netscape cookie format including comments.
- * This will be saved to a temporary file before running yt-dlp.
- */
-const rawCookies = `# Netscape HTTP Cookie File
+// আপনার raw cookies এখানে বসান (Netscape ফরম্যাটে)
+const rawCookies = `Netscape HTTP Cookie File
 # http://curl.haxx.se/rfc/cookie_spec.html
 # This is a generated file!  Do not edit.
 
@@ -39,14 +35,33 @@ const rawCookies = `# Netscape HTTP Cookie File
 .youtube.com	TRUE	/	TRUE	1766307015	__Secure-ROLLOUT_TOKEN	CJzrr7GMwcWd7AEQjt_C5Ka2jQMY3fGV1NaJjgM%3D
 .youtube.com	TRUE	/	TRUE	0	YSC	9QDOzN69Rt0
 
-
-
-
-
-
-
-
 `;
+
+function getYoutubeVideoId(url) {
+  try {
+    const urlObj = new URL(url);
+
+    if (urlObj.hostname === 'youtu.be') {
+      return urlObj.pathname.slice(1);
+    }
+
+    if (urlObj.pathname.startsWith('/embed/')) {
+      return urlObj.pathname.split('/')[2];
+    }
+
+    if (urlObj.pathname.startsWith('/shorts/')) {
+      return urlObj.pathname.split('/')[2];
+    }
+
+    if (urlObj.searchParams.has('v')) {
+      return urlObj.searchParams.get('v');
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export const getScreenshot = (req, res) => {
   const { url, timestamp } = req.query;
@@ -54,15 +69,21 @@ export const getScreenshot = (req, res) => {
     return res.status(400).json({ error: 'url and timestamp are required' });
   }
 
-  const cleanUrl = url.split('?')[0];
+  const videoId = getYoutubeVideoId(url);
+  if (!videoId) {
+    return res.status(400).json({ error: 'Invalid YouTube URL or video ID not found' });
+  }
+
+  const cleanUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
   const tempDir = tmp.dirSync({ unsafeCleanup: true });
   const output = path.join(tempDir.name, 'thumb.jpg');
 
-  // Write cookies to a temp file
+  // cookes.txt টেম্পোরারি ফাইলে লেখুন
   const cookiesPath = path.join(tempDir.name, 'youtube_cookies.txt');
   fs.writeFileSync(cookiesPath, rawCookies);
 
-  // Use yt-dlp with the cookie file inside temp dir
+  // yt-dlp কমান্ড ভিডিওর ডিরেক্ট URL পেতে (best format)
   const ytdlCmd = `yt-dlp --cookies "${cookiesPath}" -f best -g "${cleanUrl}"`;
 
   exec(ytdlCmd, (err, stdout, stderr) => {
@@ -73,6 +94,8 @@ export const getScreenshot = (req, res) => {
     }
 
     const videoURL = stdout.trim();
+
+    // ffmpeg দিয়ে নির্দিষ্ট সময়ের থাম্বনেইল তৈরি
     const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoURL}" -frames:v 1 -q:v 2 "${output}" -y`;
 
     exec(ffmpegCmd, (ffErr, ffStdout, ffStderr) => {
