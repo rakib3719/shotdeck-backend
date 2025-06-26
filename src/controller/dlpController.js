@@ -3,14 +3,18 @@ import path from 'node:path';
 import fs from 'node:fs';
 import tmp from 'tmp';
 
-// আপনার raw cookies এখানে বসান (Netscape ফরম্যাটে)
-const rawCookies = `Netscape HTTP Cookie File
+/**
+ * Your raw cookies string copied directly from the .txt file.
+ * Keep the exact Netscape cookie format including comments.
+ * This will be saved to a temporary file before running yt-dlp.
+ */
+const rawCookies = `# Netscape HTTP Cookie File
 # http://curl.haxx.se/rfc/cookie_spec.html
 # This is a generated file!  Do not edit.
 
 .youtube.com	TRUE	/	TRUE	1765443892	VISITOR_INFO1_LIVE	8d2LPbbrwlI
 .youtube.com	TRUE	/	TRUE	1765443892	VISITOR_PRIVACY_METADATA	CgJCRBIEGgAgDA%3D%3D
-.youtube.com	TRUE	/	TRUE	1785392876	PREF	tz=Asia.Dhaka&f7=100&f6=40000000
+.youtube.com	TRUE	/	TRUE	1785469315	PREF	tz=Asia.Dhaka&f7=100&f6=40000000
 .youtube.com	TRUE	/	FALSE	1785218619	HSID	AeXsIFTYvJyDevY7z
 .youtube.com	TRUE	/	TRUE	1785218619	SSID	AbrOfdHMcBLMt89fI
 .youtube.com	TRUE	/	FALSE	1785218619	APISID	I_ZzePouuGb4lJHh/A_4hc7Ray2JypdPv7
@@ -21,47 +25,31 @@ const rawCookies = `Netscape HTTP Cookie File
 .youtube.com	TRUE	/	TRUE	1785218619	__Secure-1PSID	g.a000yQhDLL8D-UKmNv7Lrx78hWAF-hsUzC6SpzjZrsfZiHur_MeNCh7FR0ZPHymwmBF-LCQedQACgYKATISARcSFQHGX2Mi28tjjVndDILCQU_ipUkJdBoVAUF8yKqQItkX_wu8iZR-YijPKgYE0076
 .youtube.com	TRUE	/	TRUE	1785218619	__Secure-3PSID	g.a000yQhDLL8D-UKmNv7Lrx78hWAF-hsUzC6SpzjZrsfZiHur_MeNyhbbdA8sarHzen2y3RHY1QACgYKAbkSARcSFQHGX2MiT6HU8UNp_6j6xj-d4GtJpBoVAUF8yKplS_2BJxOVRlhW9JyITS-p0076
 .youtube.com	TRUE	/	TRUE	1785218890	LOGIN_INFO	AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ:QUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
-.youtube.com	TRUE	/	TRUE	1782362912	__Secure-1PSIDTS	sidts-CjEB5H03P_p-QFT4CbRt9CZMLstZAt5abmTB5D_tQ5pxurWIEN2mYBD73GzfaAYpAcy4EAA
-.youtube.com	TRUE	/	TRUE	1782362912	__Secure-3PSIDTS	sidts-CjEB5H03P_p-QFT4CbRt9CZMLstZAt5abmTB5D_tQ5pxurWIEN2mYBD73GzfaAYpAcy4EAA
-.youtube.com	TRUE	/	FALSE	1750832879	ST-l3hjtt	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
-.youtube.com	TRUE	/	FALSE	1750832880	ST-tladcw	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
-.youtube.com	TRUE	/	FALSE	1750832880	ST-3opvp5	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
-.youtube.com	TRUE	/	FALSE	1750832881	ST-xuwub9	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
-.youtube.com	TRUE	/	FALSE	1782368877	SIDCC	AKEyXzUFHHOyuX_ezVQlXABu1G6v5jWjsV_eLPlvUVEjQtX09ys4dx6eIrusaNnoGa9aM5stWQ
-.youtube.com	TRUE	/	TRUE	1782368877	__Secure-1PSIDCC	AKEyXzWBrfTCs9u-q6QLk-N7PM1Ib3yvISDnyz4FO4S0wh2kC88m4uaFrNHBLVubdZANFTwOfQ
-.youtube.com	TRUE	/	TRUE	1782368877	__Secure-3PSIDCC	AKEyXzVKEcV6eOj0O6XVEbARlKz3TDSrtn4vhwyxsuYqL5_C6dO0nViyh-3rDnQG1bOPlxm0kek
-.youtube.com	TRUE	/	TRUE	1766384873	VISITOR_INFO1_LIVE	wWFeSnOdi3c
-.youtube.com	TRUE	/	TRUE	1766384873	VISITOR_PRIVACY_METADATA	CgJCRBIEGgAgHw%3D%3D
-.youtube.com	TRUE	/	TRUE	1766307015	__Secure-ROLLOUT_TOKEN	CJzrr7GMwcWd7AEQjt_C5Ka2jQMY3fGV1NaJjgM%3D
-.youtube.com	TRUE	/	TRUE	0	YSC	9QDOzN69Rt0
+.youtube.com	TRUE	/	FALSE	1750909319	ST-l3hjtt	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-tladcw	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-3opvp5	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-hcbf8d	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	TRUE	1750909914	CONSISTENCY	AKreu9uwpHMTlSAmS5MthVFADazPw-fKgMe390ZNszeIxQRyDutN8yOnUFX65iUYR_0QV6eUwHnil5wohUd9E6hvD5ruh46_Gu9uhmpVtUmeeRx_0Mf6HOxu5PVGdgwpmMNROfBA3Jy3n7f3J8_tW_N8
+.youtube.com	TRUE	/	FALSE	1750909320	ST-xuwub9	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	TRUE	1782445316	__Secure-1PSIDTS	sidts-CjEB5H03PwH-_jYSrb4wvtCDjHdviXsdG3gx4c8PZDk85j6Czveyc8UymkAoUmR54GpFEAA
+.youtube.com	TRUE	/	TRUE	1782445316	__Secure-3PSIDTS	sidts-CjEB5H03PwH-_jYSrb4wvtCDjHdviXsdG3gx4c8PZDk85j6Czveyc8UymkAoUmR54GpFEAA
+.youtube.com	TRUE	/	FALSE	1782445317	SIDCC	AKEyXzWPxJMhMdEAmgv9aDkvYet-gAuQ2KtbT0mqLVeRdSh1S8DzHHfXzU3dmljmyTiCILr2rw
+.youtube.com	TRUE	/	TRUE	1782445317	__Secure-1PSIDCC	AKEyXzVxNOgSF1jn5jynfWpvgHx7WEbWRJDhYHlpu8MMi1NR3-SZnJVGfMCYWRkjp5uPrXWAjQ
+.youtube.com	TRUE	/	TRUE	1782445317	__Secure-3PSIDCC	AKEyXzViV13kkw_zDVGSMG3lB5_y4CPtnCOLJPIFN7GmvqY_woQ9bEQXHX_KvVElHYx_Kxo_DvU
+.youtube.com	TRUE	/	TRUE	1766461312	VISITOR_INFO1_LIVE	wWFeSnOdi3c
+.youtube.com	TRUE	/	TRUE	1766461312	VISITOR_PRIVACY_METADATA	CgJCRBIEGgAgHw%3D%3D
+.youtube.com	TRUE	/	TRUE	0	YSC	0UQ9Co29V2M
+.youtube.com	TRUE	/	TRUE	1766458572	__Secure-ROLLOUT_TOKEN	CJzrr7GMwcWd7AEQjt_C5Ka2jQMY8ojyn4uOjgM%3D
+
+
+
+
+
+
+
+
 
 `;
-
-function getYoutubeVideoId(url) {
-  try {
-    const urlObj = new URL(url);
-
-    if (urlObj.hostname === 'youtu.be') {
-      return urlObj.pathname.slice(1);
-    }
-
-    if (urlObj.pathname.startsWith('/embed/')) {
-      return urlObj.pathname.split('/')[2];
-    }
-
-    if (urlObj.pathname.startsWith('/shorts/')) {
-      return urlObj.pathname.split('/')[2];
-    }
-
-    if (urlObj.searchParams.has('v')) {
-      return urlObj.searchParams.get('v');
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 export const getScreenshot = (req, res) => {
   const { url, timestamp } = req.query;
@@ -69,21 +57,15 @@ export const getScreenshot = (req, res) => {
     return res.status(400).json({ error: 'url and timestamp are required' });
   }
 
-  const videoId = getYoutubeVideoId(url);
-  if (!videoId) {
-    return res.status(400).json({ error: 'Invalid YouTube URL or video ID not found' });
-  }
-
-  const cleanUrl = `https://www.youtube.com/watch?v=${videoId}`;
-
+  const cleanUrl = url.split('?')[0];
   const tempDir = tmp.dirSync({ unsafeCleanup: true });
   const output = path.join(tempDir.name, 'thumb.jpg');
 
-  // cookes.txt টেম্পোরারি ফাইলে লেখুন
+  // Write cookies to a temp file
   const cookiesPath = path.join(tempDir.name, 'youtube_cookies.txt');
   fs.writeFileSync(cookiesPath, rawCookies);
 
-  // yt-dlp কমান্ড ভিডিওর ডিরেক্ট URL পেতে (best format)
+  // Use yt-dlp with the cookie file inside temp dir
   const ytdlCmd = `yt-dlp --cookies "${cookiesPath}" -f best -g "${cleanUrl}"`;
 
   exec(ytdlCmd, (err, stdout, stderr) => {
@@ -94,8 +76,6 @@ export const getScreenshot = (req, res) => {
     }
 
     const videoURL = stdout.trim();
-
-    // ffmpeg দিয়ে নির্দিষ্ট সময়ের থাম্বনেইল তৈরি
     const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoURL}" -frames:v 1 -q:v 2 "${output}" -y`;
 
     exec(ffmpegCmd, (ffErr, ffStdout, ffStderr) => {
