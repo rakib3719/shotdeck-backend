@@ -46,6 +46,8 @@
 
     "nodemon": "^3.1.10",
 
+    "puppeteer": "^24.10.2",
+
     "react-hook-form": "^7.56.4",
 
     "tmp": "^0.2.3"
