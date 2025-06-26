@@ -1,67 +1,93 @@
-import puppeteer from 'puppeteer-core'; // puppeteer-core দিয়ে Chromium path সেট করতে পারবো
+import { exec } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import tmp from 'tmp';
 
-const CHROMIUM_PATH = '/usr/bin/chromium';  // VPS এ Chromium executable এর সঠিক path দিতে হবে
+/**
+ * Your raw cookies string copied directly from the .txt file.
+ * Keep the exact Netscape cookie format including comments.
+ * This will be saved to a temporary file before running yt-dlp.
+ */
+const rawCookies = `# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
 
-export const getScreenshot = async (req, res) => {
+.youtube.com	TRUE	/	TRUE	1765443892	VISITOR_INFO1_LIVE	8d2LPbbrwlI
+.youtube.com	TRUE	/	TRUE	1765443892	VISITOR_PRIVACY_METADATA	CgJCRBIEGgAgDA%3D%3D
+.youtube.com	TRUE	/	TRUE	1785469315	PREF	tz=Asia.Dhaka&f7=100&f6=40000000
+.youtube.com	TRUE	/	FALSE	1785218619	HSID	AeXsIFTYvJyDevY7z
+.youtube.com	TRUE	/	TRUE	1785218619	SSID	AbrOfdHMcBLMt89fI
+.youtube.com	TRUE	/	FALSE	1785218619	APISID	I_ZzePouuGb4lJHh/A_4hc7Ray2JypdPv7
+.youtube.com	TRUE	/	TRUE	1785218619	SAPISID	0I48LvzUFV3O3528/AiJZ4QHwGPWMFCVDO
+.youtube.com	TRUE	/	TRUE	1785218619	__Secure-1PAPISID	0I48LvzUFV3O3528/AiJZ4QHwGPWMFCVDO
+.youtube.com	TRUE	/	TRUE	1785218619	__Secure-3PAPISID	0I48LvzUFV3O3528/AiJZ4QHwGPWMFCVDO
+.youtube.com	TRUE	/	FALSE	1785218619	SID	g.a000yQhDLL8D-UKmNv7Lrx78hWAF-hsUzC6SpzjZrsfZiHur_MeNfyazjq3ASfYW1EzFHjqRaAACgYKAX0SARcSFQHGX2Mil3dHzarYb6Q6Z0vDeiVW4RoVAUF8yKryGrNGU4vCBjYaAchhXxps0076
+.youtube.com	TRUE	/	TRUE	1785218619	__Secure-1PSID	g.a000yQhDLL8D-UKmNv7Lrx78hWAF-hsUzC6SpzjZrsfZiHur_MeNCh7FR0ZPHymwmBF-LCQedQACgYKATISARcSFQHGX2Mi28tjjVndDILCQU_ipUkJdBoVAUF8yKqQItkX_wu8iZR-YijPKgYE0076
+.youtube.com	TRUE	/	TRUE	1785218619	__Secure-3PSID	g.a000yQhDLL8D-UKmNv7Lrx78hWAF-hsUzC6SpzjZrsfZiHur_MeNyhbbdA8sarHzen2y3RHY1QACgYKAbkSARcSFQHGX2MiT6HU8UNp_6j6xj-d4GtJpBoVAUF8yKplS_2BJxOVRlhW9JyITS-p0076
+.youtube.com	TRUE	/	TRUE	1785218890	LOGIN_INFO	AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ:QUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-l3hjtt	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-tladcw	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-3opvp5	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	FALSE	1750909319	ST-hcbf8d	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	TRUE	1750909914	CONSISTENCY	AKreu9uwpHMTlSAmS5MthVFADazPw-fKgMe390ZNszeIxQRyDutN8yOnUFX65iUYR_0QV6eUwHnil5wohUd9E6hvD5ruh46_Gu9uhmpVtUmeeRx_0Mf6HOxu5PVGdgwpmMNROfBA3Jy3n7f3J8_tW_N8
+.youtube.com	TRUE	/	FALSE	1750909320	ST-xuwub9	session_logininfo=AFmmF2swRQIgV-vdn20bQhHMurDpi_5FbqAFNwmCuJOVHRUxUXdGo2ICIQDZQR-t50Vxqm_Gb-tx4WdttyBaWlKvfGAh5dQbiu1UCQ%3AQUQ3MjNmeFBiQTZnMHFVQ3VzRy1VZ1dXTmFMYmk2bFFxSXctaWUyV09RQ0dwdHRkcTJzWnZsYnUxZW54UjhPU0prTEtaSG9Tc2pLeEI5SUNyTUhROTJxREpLV0liSndKaVlQUFF5Zm81MFNMcVNwRXU5STgxWGprRUxIemdyMTdmVzg2OTE4STlxamZGTjNocXZkVjFQZ2VBNVdTWWY1Snp3
+.youtube.com	TRUE	/	TRUE	1782445316	__Secure-1PSIDTS	sidts-CjEB5H03PwH-_jYSrb4wvtCDjHdviXsdG3gx4c8PZDk85j6Czveyc8UymkAoUmR54GpFEAA
+.youtube.com	TRUE	/	TRUE	1782445316	__Secure-3PSIDTS	sidts-CjEB5H03PwH-_jYSrb4wvtCDjHdviXsdG3gx4c8PZDk85j6Czveyc8UymkAoUmR54GpFEAA
+.youtube.com	TRUE	/	FALSE	1782445317	SIDCC	AKEyXzWPxJMhMdEAmgv9aDkvYet-gAuQ2KtbT0mqLVeRdSh1S8DzHHfXzU3dmljmyTiCILr2rw
+.youtube.com	TRUE	/	TRUE	1782445317	__Secure-1PSIDCC	AKEyXzVxNOgSF1jn5jynfWpvgHx7WEbWRJDhYHlpu8MMi1NR3-SZnJVGfMCYWRkjp5uPrXWAjQ
+.youtube.com	TRUE	/	TRUE	1782445317	__Secure-3PSIDCC	AKEyXzViV13kkw_zDVGSMG3lB5_y4CPtnCOLJPIFN7GmvqY_woQ9bEQXHX_KvVElHYx_Kxo_DvU
+.youtube.com	TRUE	/	TRUE	1766461312	VISITOR_INFO1_LIVE	wWFeSnOdi3c
+.youtube.com	TRUE	/	TRUE	1766461312	VISITOR_PRIVACY_METADATA	CgJCRBIEGgAgHw%3D%3D
+.youtube.com	TRUE	/	TRUE	0	YSC	0UQ9Co29V2M
+.youtube.com	TRUE	/	TRUE	1766458572	__Secure-ROLLOUT_TOKEN	CJzrr7GMwcWd7AEQjt_C5Ka2jQMY8ojyn4uOjgM%3D
+
+
+
+
+
+
+
+
+
+`;
+
+export const getScreenshot = (req, res) => {
   const { url, timestamp } = req.query;
   if (!url || !timestamp) {
     return res.status(400).json({ error: 'url and timestamp are required' });
   }
 
-  let browser;
+  const cleanUrl = url.split('?')[0];
   const tempDir = tmp.dirSync({ unsafeCleanup: true });
-  const outputFile = path.join(tempDir.name, 'thumbnail.jpg');
+  const output = path.join(tempDir.name, 'thumb.jpg');
 
-  try {
-    browser = await puppeteer.launch({
-      headless: true,
-      executablePath: CHROMIUM_PATH,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+  // Write cookies to a temp file
+  const cookiesPath = path.join(tempDir.name, 'youtube_cookies.txt');
+  fs.writeFileSync(cookiesPath, rawCookies);
 
-    const page = await browser.newPage();
+  // Use yt-dlp with the cookie file inside temp dir
+  const ytdlCmd = `yt-dlp --cookies "${cookiesPath}" -f best -g "${cleanUrl}"`;
 
-    // YouTube ভিডিও পেজে যাওয়া
-    await page.goto(url, { waitUntil: 'networkidle2' });
-
-    // ভিডিও প্লেয়ার এলিমেন্ট লোড হওয়া পর্যন্ত অপেক্ষা
-    await page.waitForSelector('video');
-
-    // ভিডিও এলিমেন্ট খুঁজে নাও
-    const videoHandle = await page.$('video');
-
-    if (!videoHandle) {
-      throw new Error('Video element not found on page');
+  exec(ytdlCmd, (err, stdout, stderr) => {
+    if (err || !stdout.trim()) {
+      tempDir.removeCallback();
+      console.error('yt-dlp error:', stderr);
+      return res.status(500).json({ error: 'yt-dlp failed', details: stderr });
     }
 
-    // ভিডিও timestamp সেট করো (seconds এ কনভার্ট করতে হবে)
-    const [hh, mm, ss] = timestamp.split(':').map(Number);
-    const totalSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+    const videoURL = stdout.trim();
+    const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoURL}" -frames:v 1 -q:v 2 "${output}" -y`;
 
-    // ভিডিও timestamp সেট করা - evaluate দিয়ে ভিডিও tag এ currentTime সেট করবো
-    await page.evaluate((video, time) => {
-      video.currentTime = time;
-    }, videoHandle, totalSeconds);
+    exec(ffmpegCmd, (ffErr, ffStdout, ffStderr) => {
+      if (ffErr || !fs.existsSync(output)) {
+        tempDir.removeCallback();
+        console.error('ffmpeg error:', ffStderr);
+        return res.status(500).json({ error: 'ffmpeg failed', details: ffStderr });
+      }
 
-    // ভিডিও সেট হওয়ার জন্য একটু অপেক্ষা
-    await page.waitForTimeout(2000);
-
-    // ভিডিও এলিমেন্টের screenshot নাও
-    await videoHandle.screenshot({ path: outputFile });
-
-    // ছবি রিড করে response এ পাঠাও
-    const imageBuffer = fs.readFileSync(outputFile);
-    res.set('Content-Type', 'image/jpeg');
-    res.status(200).send(imageBuffer);
-
-  } catch (error) {
-    console.error('Puppeteer error:', error);
-    res.status(500).json({ error: 'Puppeteer failed', details: error.message });
-  } finally {
-    if (browser) await browser.close();
-    tempDir.removeCallback();
-  }
+      const img = fs.readFileSync(output);
+      tempDir.removeCallback();
+      res.set('Content-Type', 'image/jpeg').status(200).send(img);
+    });
+  });
 };
