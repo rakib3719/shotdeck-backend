@@ -51,7 +51,7 @@ export const getScreenshot = (req, res) => {
   const output = path.join(tempDir.name, 'thumb.jpg');
 
   // Step 1: Copy the cookie file from your defined path
-  const originalCookiesPath = path.resolve('../../yt.txt');
+  const originalCookiesPath = path.resolve('./yt.txt');
   const cookiesPath = path.join(tempDir.name, 'yt.txt');
   try {
     fs.copyFileSync(originalCookiesPath, cookiesPath);
