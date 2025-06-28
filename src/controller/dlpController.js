@@ -17,7 +17,7 @@ export const getScreenshot = (req, res) => {
   
 
   // Step 1: Copy the cookie file from your defined path
-  const originalCookiesPath = path.resolve('../../../youtube_cookies.txt'); // <-- this is your saved cookie file
+  const originalCookiesPath = path.resolve('../../yt.txt'); // <-- this is your saved cookie file
   const cookiesPath = path.join(tempDir.name, 'youtube_cookies.txt'); // temp path to pass into yt-dlp
   try {
     fs.copyFileSync(originalCookiesPath, cookiesPath); // Copy the cookie file to temp location
