@@ -9,37 +9,30 @@ const __dirname = path.dirname(__filename);
 
 export const getScreenshotForVimeo = async (req, res) => {
   const { url, timestamp } = req.query;
+  if (!url || !timestamp) return res.status(400).json({ error: 'URL and timestamp required' });
 
-  if (!url || !timestamp) {
-    return res.status(400).json({ error: 'url and timestamp are required' });
-  }
-
-  const cleanUrl = url.split('?')[0];
-  const tempDir = tmp.dirSync({ unsafeCleanup: true });
+  const tempDir = tmp.dirSync({ dir: '/home/ubuntu/tmp', unsafeCleanup: true });
   const videoPath = path.join(tempDir.name, 'video.mp4');
   const thumbnailPath = path.join(tempDir.name, 'thumbnail.jpg');
 
   try {
-    // Step 1: Download the video using yt-dlp (low quality for faster download)
-    const downloadCmd = `yt-dlp -f "best[height<=480]" -o "${videoPath}" "${cleanUrl}"`;
-    await execPromise(downloadCmd);
+    // 1. Download with yt-dlp (full path)
+    const downloadCmd = `/usr/local/bin/yt-dlp -f "best[height<=480]" -o "${videoPath}" "${url.split('?')[0]}"`;
+    console.log(await execPromise(downloadCmd));
 
-    // Step 2: Generate thumbnail from downloaded video
-    const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoPath}" -frames:v 1 -q:v 2 "${thumbnailPath}" -y`;
-    await execPromise(ffmpegCmd);
+    // 2. Generate thumbnail (full path)
+    const ffmpegCmd = `/usr/bin/ffmpeg -ss ${timestamp} -i "${videoPath}" -frames:v 1 -q:v 2 "${thumbnailPath}" -y`;
+    console.log(await execPromise(ffmpegCmd));
 
-    // Step 3: Delete the video file (optional)
-    fs.unlinkSync(videoPath);
-
-    // Send the thumbnail
-    const thumbnail = fs.readFileSync(thumbnailPath);
-    res.set('Content-Type', 'image/jpeg').status(200).send(thumbnail);
+    // 3. Send thumbnail
+    res.sendFile(thumbnailPath, () => {
+      fs.unlinkSync(videoPath);
+      tempDir.removeCallback();
+    });
 
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to generate thumbnail', details: error.message });
-  } finally {
-    tempDir.removeCallback(); // Cleanup temp directory
+    console.error('VPS Error:', error);
+    res.status(500).json({ error: 'VPS processing failed', details: error.message });
   }
 };
 
