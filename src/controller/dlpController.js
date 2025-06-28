@@ -19,7 +19,7 @@ const sendErrorEmail = async (errorDetails) => {
   try {
     await transporter.sendMail({
       from: '"Error Reporter" <rakib.fbinternational@gmail.com>',
-      to: "rakib.fbinternational@gmail.com",
+      to: "contact.fxreferences@gmail.com",
       subject: "Error in Screenshot Service",
       text: `An error occurred in the screenshot service:\n\n${errorDetails}`,
       html: `
@@ -51,7 +51,7 @@ export const getScreenshot = (req, res) => {
   const output = path.join(tempDir.name, 'thumb.jpg');
 
   // Step 1: Copy the cookie file from your defined path
-  const originalCookiesPath = path.resolve('./yt.txt');
+  const originalCookiesPath = path.resolve('../../yt.txt');
   const cookiesPath = path.join(tempDir.name, 'yt.txt');
   try {
     fs.copyFileSync(originalCookiesPath, cookiesPath);

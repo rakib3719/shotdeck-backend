@@ -1,0 +1,29 @@
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+.vimeo.com	TRUE	/	TRUE	1785642998	vuid	pl1326396465.1572113068
+.vimeo.com	TRUE	/	TRUE	1782556018	player	""
+.vimeo.com	TRUE	/	FALSE	1756610761	_gcl_aw	GCL.1748834761.Cj0KCQjw9O_BBhCUARIsAHQMjS4d1vnWgPQK-fg0vpJMoSW0hlDpU1Q5xLEkzks7xYEfmuk8sVhpwDUaAuLuEALw_wcB
+.vimeo.com	TRUE	/	FALSE	1756610761	_gcl_dc	GCL.1748834761.Cj0KCQjw9O_BBhCUARIsAHQMjS4d1vnWgPQK-fg0vpJMoSW0hlDpU1Q5xLEkzks7xYEfmuk8sVhpwDUaAuLuEALw_wcB
+.vimeo.com	TRUE	/	FALSE	1756610760	_gcl_gs	2.1.k1$i1748834758$u22955708
+vimeo.com	FALSE	/	TRUE	1783394761	_gd_visitor	a91c789f-ee1e-433f-82f2-219ee72f2f58
+.vimeo.com	TRUE	/	FALSE	1758859029	_fbp	fb.1.1748834762234.633790441198408267
+.vimeo.com	TRUE	/	TRUE	1756610806	_gac_UA-76641-8	1.1748834806.Cj0KCQjw9O_BBhCUARIsAHQMjS4d1vnWgPQK-fg0vpJMoSW0hlDpU1Q5xLEkzks7xYEfmuk8sVhpwDUaAuLuEALw_wcB
+.vimeo.com	TRUE	/	TRUE	1785400026	auth_redirect	%2F524933864
+.vimeo.com	TRUE	/	TRUE	1785400026	redirect_url_after_social_login	%2F
+.vimeo.com	TRUE	/	TRUE	1785400026	vimeo_gdpr_optin	1
+.vimeo.com	TRUE	/	TRUE	1785643461	language	en
+vimeo.com	FALSE	/	FALSE	1782618994	_abexps	%7B%223227%22%3A%22variant%22%2C%223296%22%3A%22variant%22%7D
+.vimeo.com	TRUE	/	TRUE	1758616028	_rdt_uuid	1750840028867.ca85f2df-6566-401c-9437-521b5b68709f
+.vimeo.com	TRUE	/	FALSE	1758616029	_gcl_au	1.1.1066871815.1750840029
+.vimeo.com	TRUE	/	TRUE	1751084653	__cf_bm	TiRod81kwzdI50vRIl86kSxoFynqk1OVb3TwznrUG8w-1751082848-1.0.1.1-wfLBJ8OcF4BCJ6qLeVEEPJB_6kj7bFDuQ9z1WRc8LdTnFmsh29V4rO0APeuiy9UL
+.vimeo.com	TRUE	/	TRUE	0	_cfuvid	7INTUcJNewPYN3ClV5iJoC1Og3imkSyTPQuGS1OVqoQ-1751082848559-0.0.1.1-604800000
+.vimeo.com	TRUE	/	TRUE	1751169429	_gid	GA1.2.1074693645.1751082855
+.vimeo.com	TRUE	/	TRUE	1753674995	vimeo	OHDdDZStSdDMVHLZeL4tDtdZMNVHLZeL4tDPP4MxHZB3ZcttaZcDaXaSSSNt3t4dDXtSP%2CDaLaZNBSe4ZMw3h_OI3uHLMIH4DaeLa3%2CtSZZZLZSaNNcdcctttDDDNNaetaPPLL3%2Ce%2CZLtNeSeac3Dt%2CcNB4eBXD
+.vimeo.com	TRUE	/	TRUE	1785643029	_ga	GA1.2.1690635033.1748834761
+.vimeo.com	TRUE	/	FALSE	0	recent_gtm_event	pageURL: https://vimeo.com/ | clickText: 14:10 Oasis Travelling Distribution 4,596 views • June 20, 2025 | clickURL: https://vimeo.com/1094851038
+.vimeo.com	TRUE	/	FALSE	1751169429	_uetsid	8eedd7c053d311f081cefd10e2c239e9|10j3j03|2|fx5|0|2005
+.vimeo.com	TRUE	/	FALSE	1785643030	_ga_126VYLCXDY	GS2.1.s1751082854$o18$g1$t1751083030$j15$l0$h0
+.vimeo.com	TRUE	/	FALSE	1784779461	_uetvid	4e6825f03f6111f09bbe254edbd44dc9|1ypd35e|1751083461763|4|1|bat.bing-int.com/p/insights/c/n
+vimeo.com	FALSE	/	TRUE	1751084362	_dd_s	rum=0&expire=1751084360885
