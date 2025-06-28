@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import tmp from 'tmp';
 
 
+
 export const getScreenshot = (req, res) => {
   const { url, timestamp } = req.query;
   if (!url || !timestamp) {
