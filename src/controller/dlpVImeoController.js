@@ -2,97 +2,56 @@ import { exec } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import tmp from 'tmp';
-import nodemailer from 'nodemailer';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load cookies from vm.txt
-const rawCookies = fs.readFileSync(path.resolve(__dirname, './vm.txt'), 'utf-8');
-
-// Email transporter setup
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: "rakib.fbinternational@gmail.com",
-    pass: "gbjv irau ksag logr",
-  },
-});
-
-const sendErrorEmail = async (errorDetails) => {
-  try {
-    await transporter.sendMail({
-      from: '"Error Reporter" <rakib.fbinternational@gmail.com>',
-      to: "contact.fxreferences@gmail.com",
-      subject: "Error in Vimeo Screenshot Service",
-      text: `An error occurred:\n\n${errorDetails}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <h2 style="color: #d9534f;">⚠️ Error in Vimeo Screenshot Service</h2>
-          <p>An error occurred while processing a Vimeo screenshot request:</p>
-          <div style="background-color: #f8f9fa; border-left: 4px solid #d9534f; padding: 10px; margin: 10px 0;">
-            <pre style="white-space: pre-wrap; word-wrap: break-word;">${errorDetails}</pre>
-          </div>
-          <p>Please investigate this issue.</p>
-        </div>
-      `
-    });
-  } catch (emailError) {
-    console.error('Failed to send error email:', emailError);
-  }
-};
-
-export const getScreenshotForVimeo = (req, res) => {
+export const getScreenshotForVimeo = async (req, res) => {
   const { url, timestamp } = req.query;
+
   if (!url || !timestamp) {
-    const error = 'url and timestamp are required';
-    sendErrorEmail(error);
-    return res.status(400).json({ error });
+    return res.status(400).json({ error: 'url and timestamp are required' });
   }
 
   const cleanUrl = url.split('?')[0];
   const tempDir = tmp.dirSync({ unsafeCleanup: true });
-  const output = path.join(tempDir.name, 'thumb.jpg');
+  const videoPath = path.join(tempDir.name, 'video.mp4');
+  const thumbnailPath = path.join(tempDir.name, 'thumbnail.jpg');
 
-  const cookiesPath = path.join(tempDir.name, 'vimeo_cookies.txt');
-  fs.writeFileSync(cookiesPath, rawCookies);
+  try {
+    // Step 1: Download the video using yt-dlp (low quality for faster download)
+    const downloadCmd = `yt-dlp -f "best[height<=480]" -o "${videoPath}" "${cleanUrl}"`;
+    await execPromise(downloadCmd);
 
-  const ytdlFormat = 'hls-fastly_skyfire-586';
-  const ytdlCmd = `yt-dlp --cookies "${cookiesPath}" -f ${ytdlFormat} -g "${cleanUrl}"`;
+    // Step 2: Generate thumbnail from downloaded video
+    const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoPath}" -frames:v 1 -q:v 2 "${thumbnailPath}" -y`;
+    await execPromise(ffmpegCmd);
 
-  exec(ytdlCmd, (err, stdout, stderr) => {
-    if (err || !stdout.trim()) {
-      tempDir.removeCallback();
-      console.error('yt-dlp error:', stderr);
-      const error = `yt-dlp failed: ${stderr}`;
-      sendErrorEmail(error);
-      return res.status(500).json({
-        error: 'yt-dlp failed',
-        details: stderr || 'No video URL extracted',
-      });
-    }
+    // Step 3: Delete the video file (optional)
+    fs.unlinkSync(videoPath);
 
-    const videoURL = stdout.trim();
-    const ffmpegCmd = `ffmpeg -ss ${timestamp} -i "${videoURL}" -frames:v 1 -q:v 2 "${output}" -y`;
+    // Send the thumbnail
+    const thumbnail = fs.readFileSync(thumbnailPath);
+    res.set('Content-Type', 'image/jpeg').status(200).send(thumbnail);
 
-    exec(ffmpegCmd, (ffErr, ffStdout, ffStderr) => {
-      if (ffErr || !fs.existsSync(output)) {
-        tempDir.removeCallback();
-        console.error('ffmpeg error:', ffStderr);
-        const error = `ffmpeg failed: ${ffStderr}`;
-        sendErrorEmail(error);
-        return res.status(500).json({
-          error: 'ffmpeg failed',
-          details: ffStderr || 'Screenshot not generated',
-        });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to generate thumbnail', details: error.message });
+  } finally {
+    tempDir.removeCallback(); // Cleanup temp directory
+  }
+};
+
+// Helper function to convert exec to Promise
+function execPromise(command) {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(stderr || error);
+      } else {
+        resolve(stdout);
       }
-
-      const img = fs.readFileSync(output);
-      tempDir.removeCallback();
-      res.set('Content-Type', 'image/jpeg').status(200).send(img);
     });
   });
-};
+}
