@@ -39,6 +39,7 @@ const sendErrorEmail = async (errorDetails) => {
 };
 
 export const getScreenshot = (req, res) => {
+  
   const { url, timestamp } = req.query;
   if (!url || !timestamp) {
     const error = 'url and timestamp are required';

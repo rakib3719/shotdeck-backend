@@ -159,6 +159,11 @@ export const getShot = async (req, res) => {
       videoQuality
     } = req.query;
 
+    console.log(tags, 'Searcht tomi asco')
+    console.log(search, 'seqarch o asca abar khela hbe')
+
+
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
@@ -235,6 +240,9 @@ export const getShot = async (req, res) => {
         {videoSpeed: regex },
     
         {videoQuality: regex },
+        {
+          tags:regex
+        }
     
       ];
     }
@@ -246,8 +254,8 @@ console.log(parseArrayParam(focalLength), 'hea ami focal length')
     if (youtubeLink) filter.youtubeLink = youtubeLink;
     if (gallery) filter.gallery = { $in: parseArrayParam(gallery) };
     if (mediaType) filter.mediaType = { $in: parseArrayParam(mediaType) };
-    if (genre) filter.genre = { $in: parseArrayParam(genre) };
     if (focalLength) filter.focalLength = { $in: parseArrayParam(focalLength) };
+    if (search) filter.tags = { $in: parseArrayParam(search) };
     if (lightingConditions) filter.lightingConditions = { $in: parseArrayParam(lightingConditions) };
     if (videoType) filter.videoType = { $in: parseArrayParam(videoType) };
     if (videoQuality) filter.videoType = { $in: parseArrayParam(videoQuality) };
