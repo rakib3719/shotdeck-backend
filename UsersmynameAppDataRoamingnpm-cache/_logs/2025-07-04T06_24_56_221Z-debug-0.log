@@ -7,7 +7,8 @@
 6 silly config load:file:C:\Program Files\nodejs\npm-global\etc\npmrc
 7 verbose title npm run dev
 8 verbose argv "run" "dev"
-9 verbose logfile logs-max:10 dir:C:\project\SHOTDECK\backend\UsersmynameAppDataRoamingnpm-cache\_logs\2025-06-28T03_11_14_076Z-
-10 verbose logfile C:\project\SHOTDECK\backend\UsersmynameAppDataRoamingnpm-cache\_logs\2025-06-28T03_11_14_076Z-debug-0.log
+9 verbose logfile logs-max:10 dir:C:\project\SHOTDECK\backend\UsersmynameAppDataRoamingnpm-cache\_logs\2025-07-04T06_24_56_221Z-
+10 verbose logfile C:\project\SHOTDECK\backend\UsersmynameAppDataRoamingnpm-cache\_logs\2025-07-04T06_24_56_221Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
+13 http fetch GET 200 https://registry.npmjs.org/npm 477ms
