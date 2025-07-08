@@ -159,8 +159,17 @@ export const getShot = async (req, res) => {
       videoQuality
     } = req.query;
 
-    console.log(tags, 'Searcht tomi asco')
-    console.log(search, 'seqarch o asca abar khela hbe')
+
+// if(rigidbodies === 'rigidbodies'){
+//   console.log('yes this is rigid boodies')
+// }
+// else{
+//   console.log('na ata arekta')
+// }
+    // console.log(req.query, 'ay baba kuryem')
+
+    // console.log(tags, 'Searcht tomi asco')
+    // console.log(search, 'seqarch o asca abar khela hbe')
 
 
 

@@ -162,7 +162,7 @@ app.get('/', (req, res) => {
 
     <div class="section">
       <div class="label">🧭 Base URL</div>
-      <div class="code">https://shotdeck-backend-production.up.railway.app</div>
+      <div class="code">https://fx-references.com/backend/api</div>
     </div>
 
   
