@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🚀 ShotDeck API</title>
+  <title>🚀 Fx-References API</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
 
@@ -157,7 +157,7 @@ app.get('/', (req, res) => {
 </head>
 <body>
   <div class="terminal">
-    <h1>💥 Welcome to the ShotDeck Backend API</h1>
+    <h1>💥 Welcome to the Fx-References Backend API</h1>
     <div class="typewriter">Connecting frames, timecodes, and thumbnails...</div>
 
     <div class="section">
@@ -171,7 +171,7 @@ app.get('/', (req, res) => {
 
     <div class="footer">
       Powered by Express + yt-dlp + ffmpeg + MongoDB Atlas<br>
-      © 2025 ShotDeck API – Built with ❤️ by FB International
+      © 2025 Fx-References API – Built with ❤️ by FB International
     </div>
   </div>
 </body>
