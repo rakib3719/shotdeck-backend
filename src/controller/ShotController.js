@@ -255,7 +255,7 @@ export const getShot = async (req, res) => {
     
       ];
     }
-console.log(parseArrayParam(focalLength), 'hea ami focal length')
+// console.log(parseArrayParam(focalLength), 'hea ami focal length')
     // Apply other filters
     if (title) filter.title = title;
     if (description) filter.description = description;
