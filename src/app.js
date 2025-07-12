@@ -14,7 +14,8 @@ const allowedOrigins = [
   'http://31.97.156.58:3000',
   'https://31.97.156.58:3000',
   'http://localhost:3000',
-  'https://shotdeck.vercel.app'
+  'https://shotdeck.vercel.app',
+  'https://shotdeck-copy.vercel.app'
  
   // চাইলে আরও add করো
 ];
