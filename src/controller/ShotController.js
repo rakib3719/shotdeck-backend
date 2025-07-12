@@ -255,7 +255,7 @@ export const getShot = async (req, res) => {
     
       ];
     }
-console.log(parseArrayParam(focalLength), 'hea ami focal length')
+// console.log(parseArrayParam(focalLength), 'hea ami focal length')
     // Apply other filters
     if (title) filter.title = title;
     if (description) filter.description = description;
@@ -582,3 +582,288 @@ export const shotCount = async(req, res)=>{
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// get s hot
+
+
+// export const getShot = async (req, res) => {
+//   try {
+//     const {
+//       search,
+//       sortBy,
+//       // Basic filters
+//       director,
+//       focalLength,
+//       title,
+//       description,
+//       imageUrl,
+//       youtubeLink,
+//       gallery,
+//       mediaType,
+//       genre,
+//       releaseYear,
+//       timePeriod,
+//       color,
+//       roscoColor,
+//       customColor,
+//       aspectRatio,
+//       opticalFormat,
+//       labProcess,
+//       format,
+//       locationType,
+//       timeOfDay,
+//       numberOfPeople,
+//       gender,
+//       ageGroup,
+//       ethnicity,
+//       frameSize,
+//       shotType,
+//       composition,
+//       lensType,
+//       lightingStyle,
+//       lightingType,
+//       particles,
+//       // Crew filters
+//       cinematographer,
+//       productionDesigner,
+//       costumeDesigner,
+//       editor,
+//       age,
+//       interiorExterior,
+//       camera,
+//       lens,
+//       shotTime,
+//       set,
+//       storyLocation,
+//       filmingLocation,
+//       tags,
+//       // New FX filters
+//       rigidbodies,
+//       keywords,
+//       softBodies,
+//       clothgroom,
+//       magicAbstract,
+//       pyroVolumetrics,
+//       LiquidsFluids,
+//       crowd,
+//       mechanicsTech,
+//       compositing,
+//       simulationSize,
+//       simulationStyle,
+//       motionStyle,
+//       emitterSpeed,
+//       simulationSoftware,
+//       lightingConditions,
+//       videoType,
+//       referenceType,
+//       videoSpeed,
+//       videoQuality
+//     } = req.query;
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 50;
+//     const skip = (page - 1) * limit;
+
+//     const parseArrayParam = (param) => {
+//       if (!param) return [];
+//       return Array.isArray(param) ? param : param.split(',').map((item) => item.trim());
+//     };
+
+//     const filter = { status: 'active' };
+
+//     // Handle search with regex across all fields
+//     if (search && search.trim() !== '') {
+//       const regex = { $regex: search.trim(), $options: 'i' };
+//       filter.$or = [
+//         { title: regex },
+//         { description: regex },
+//         { genre: regex },
+//         { mediaType: regex },
+//         { timePeriod: regex },
+//         { color: regex },
+//         { roscoColor: regex },
+//         { customColor: regex },
+//         { aspectRatio: regex },
+//         { opticalFormat: regex },
+//         { labProcess: regex },
+//         { format: regex },
+//         { locationType: regex },
+//         { timeOfDay: regex },
+//         { numberOfPeople: regex },
+//         { gender: regex },
+//         { ageGroup: regex },
+//         { ethnicity: regex },
+//         { frameSize: regex },
+//         { shotType: regex },
+//         { composition: regex },
+//         { lensType: regex },
+//         { lightingStyle: regex },
+//         { lightingType: regex },
+//         { director: regex },
+//         { cinematographer: regex },
+//         { productionDesigner: regex },
+//         { costumeDesigner: regex },
+//         { editor: regex },
+//         { age: regex },
+//         { interiorExterior: regex },
+//         { camera: regex },
+//         { lens: regex },
+//         { shotTime: regex },
+//         { set: regex },
+//         { storyLocation: regex },
+//         { filmingLocation: regex },
+//         { keywords: regex },
+//         { particles: regex },
+//         { rigidbodies: regex },
+//         { softBodies: regex },
+//         { clothgroom: regex },
+//         { magicAbstract: regex },
+//         { pyroVolumetrics: regex },
+//         { LiquidsFluids: regex },
+//         { crowd: regex },
+//         { mechanicsTech: regex },
+//         { compositing: regex },
+//         { simulationSize: regex },
+//         { simulationStyle: regex },
+//         { motionStyle: regex },
+//         { emitterSpeed: regex },
+//         { simulationSoftware: regex },
+//         { focalLength: regex },
+//         { lightingConditions: regex },
+//         { videoType: regex },
+//         { referenceType: regex },
+//         { videoSpeed: regex },
+//         { videoQuality: regex },
+//         { tags: regex }
+//       ];
+//     }
+
+//     // Apply other filters
+//     if (title) filter.title = title;
+//     if (description) filter.description = description;
+//     if (imageUrl) filter.imageUrl = imageUrl;
+//     if (youtubeLink) filter.youtubeLink = youtubeLink;
+//     if (gallery) filter.gallery = { $in: parseArrayParam(gallery) };
+//     if (mediaType) filter.mediaType = { $in: parseArrayParam(mediaType) };
+//     if (focalLength) filter.focalLength = { $in: parseArrayParam(focalLength) };
+//     if (tags) filter.tags = { $in: parseArrayParam(tags) };
+//     if (lightingConditions) filter.lightingConditions = { $in: parseArrayParam(lightingConditions) };
+//     if (videoType) filter.videoType = { $in: parseArrayParam(videoType) };
+//     if (videoQuality) filter.videoQuality = { $in: parseArrayParam(videoQuality) };
+//     if (referenceType) filter.referenceType = { $in: parseArrayParam(referenceType) };
+//     if (videoSpeed) filter.videoSpeed = { $in: parseArrayParam(videoSpeed) };
+//     if (releaseYear) filter.releaseYear = releaseYear;
+//     if (timePeriod) filter.timePeriod = { $in: parseArrayParam(timePeriod) };
+//     if (color) filter.color = { $in: parseArrayParam(color) };
+//     if (roscoColor) filter.roscoColor = { $in: parseArrayParam(roscoColor) };
+//     if (customColor) filter.customColor = { $in: parseArrayParam(customColor) };
+//     if (aspectRatio) filter.aspectRatio = { $in: parseArrayParam(aspectRatio) };
+//     if (opticalFormat) filter.opticalFormat = { $in: parseArrayParam(opticalFormat) };
+//     if (labProcess) filter.labProcess = { $in: parseArrayParam(labProcess) };
+//     if (format) filter.format = { $in: parseArrayParam(format) };
+//     if (locationType) filter.locationType = { $in: parseArrayParam(locationType) };
+//     if (timeOfDay) filter.timeOfDay = { $in: parseArrayParam(timeOfDay) };
+//     if (numberOfPeople) filter.numberOfPeople = { $in: parseArrayParam(numberOfPeople) };
+//     if (gender) filter.gender = { $in: parseArrayParam(gender) };
+//     if (ageGroup) filter.ageGroup = { $in: parseArrayParam(ageGroup) };
+//     if (age) filter.age = { $in: parseArrayParam(age) };
+//     if (ethnicity) filter.ethnicity = { $in: parseArrayParam(ethnicity) };
+//     if (interiorExterior) filter.interiorExterior = { $in: parseArrayParam(interiorExterior) };
+//     if (frameSize) filter.frameSize = { $in: parseArrayParam(frameSize) };
+//     if (shotType) filter.shotType = { $in: parseArrayParam(shotType) };
+//     if (composition) filter.composition = { $in: parseArrayParam(composition) };
+//     if (lensType) filter.lensType = { $in: parseArrayParam(lensType) };
+//     if (lightingStyle) filter.lightingStyle = { $in: parseArrayParam(lightingStyle) };
+//     if (lightingType) filter.lightingType = { $in: parseArrayParam(lightingType) };
+//     if (director) filter.director = { $in: parseArrayParam(director) };
+//     if (cinematographer) filter.cinematographer = { $in: parseArrayParam(cinematographer) };
+//     if (productionDesigner) filter.productionDesigner = { $in: parseArrayParam(productionDesigner) };
+//     if (costumeDesigner) filter.costumeDesigner = { $in: parseArrayParam(costumeDesigner) };
+//     if (editor) filter.editor = { $in: parseArrayParam(editor) };
+//     if (camera) filter.camera = { $in: parseArrayParam(camera) };
+//     if (lens) filter.lens = { $in: parseArrayParam(lens) };
+//     if (shotTime) filter.shotTime = { $in: parseArrayParam(shotTime) };
+//     if (set) filter.set = { $in: parseArrayParam(set) };
+//     if (storyLocation) filter.storyLocation = { $in: parseArrayParam(storyLocation) };
+//     if (filmingLocation) filter.filmingLocation = { $in: parseArrayParam(filmingLocation) };
+//     if (keywords) filter.keywords = { $in: parseArrayParam(keywords) };
+//     if (simulationSize) filter.simulationSize = { $in: parseArrayParam(simulationSize) };
+//     if (simulationStyle) filter.simulationStyle = { $in: parseArrayParam(simulationStyle) };
+//     if (motionStyle) filter.motionStyle = { $in: parseArrayParam(motionStyle) };
+//     if (emitterSpeed) filter.emitterSpeed = { $in: parseArrayParam(emitterSpeed) };
+//     if (simulationSoftware) filter.simulationSoftware = { $in: parseArrayParam(simulationSoftware) };
+    
+//     // New FX filters
+//     if (particles) filter['simulatorTypes.particles'] = { $in: parseArrayParam(particles) };
+//     if (rigidbodies) filter['simulatorTypes.rigidbodies'] = { $in: parseArrayParam(rigidbodies) };
+//     if (softBodies) filter['simulatorTypes.softBodies'] = { $in: parseArrayParam(softBodies) };
+//     if (clothgroom) filter['simulatorTypes.clothgroom'] = { $in: parseArrayParam(clothgroom) };
+//     if (magicAbstract) filter['simulatorTypes.magicAbstract'] = { $in: parseArrayParam(magicAbstract) };
+//     if (pyroVolumetrics) filter['simulatorTypes.pyroVolumetrics'] = { $in: parseArrayParam(pyroVolumetrics) };
+//     if (LiquidsFluids) filter['simulatorTypes.LiquidsFluids'] = { $in: parseArrayParam(LiquidsFluids) };
+//     if (crowd) filter['simulatorTypes.crowd'] = { $in: parseArrayParam(crowd) };
+//     if (mechanicsTech) filter['simulatorTypes.mechanicsTech'] = { $in: parseArrayParam(mechanicsTech) };
+//     if (compositing) filter['simulatorTypes.compositing'] = { $in: parseArrayParam(compositing) };
+
+//     // Handle sorting
+//     let query;
+//     switch (sortBy) {
+//       case 'releaseDateDesc':
+//         query = Shot.find(filter).sort({ releaseYear: -1 }).skip(skip).limit(limit);
+//         break;
+//       case 'releaseDateAsc':
+//         query = Shot.find(filter).sort({ releaseYear: 1 }).skip(skip).limit(limit);
+//         break;
+//       case 'recentlyAdded':
+//         query = Shot.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
+//         break;
+//       case 'random':
+//         query = Shot.aggregate([
+//           { $match: filter },
+//           { $sample: { size: limit } },
+//           { $skip: skip },
+//           { $limit: limit }
+//         ]);
+//         break;
+//       case 'alphabetical':
+//         query = Shot.find(filter).sort({ title: 1 }).skip(skip).limit(limit);
+//         break;
+//       default:
+//         query = Shot.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
+//     }
+
+//     const resp = await query;
+
+//     res.status(200).json({
+//       message: 'Success',
+//       data: resp,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message: 'Something went wrong!',
+//       error: error.message,
+//     });
+//   }
+// };
