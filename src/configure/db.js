@@ -37,7 +37,7 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const connect = await mongoose.connect(
-      "mongodb://shotdeck:shotdeckyekah564@31.97.156.58:27017",
+      `mongodb://shotdeck:959UI8*(?\\:fedih#@*4JkaK87^%!|33@31.97.156.58:27017`,
       {
         dbName: 'shotdeck',
       }
@@ -50,3 +50,10 @@ const connectDB = async () => {
 
 export default connectDB;
 
+
+
+// db.createUser({
+//   user: "admin",
+//   pwd: "959UI8*(?\\:fedih#@*4JkaK87^%!|33", 
+//   roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
+// })
