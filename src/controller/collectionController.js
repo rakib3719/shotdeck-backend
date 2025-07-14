@@ -188,3 +188,74 @@ export const getCollectionSingle = async (req, res) => {
 };
 
 
+
+export const getCollectionAll = async (req, res)=>{
+  try {
+
+   const id = req.params.id;
+
+   const data = await CollectionName.find({ userId: id }); 
+
+    res.status(200).json({
+      message: 'Success',
+      data,
+    });CollectionName.find({ userId: id }); 
+
+    res.status(200).json({
+      message: 'Success',
+      data,
+    });
+    
+  } catch (error) {
+
+    res.status(500).json({
+      message:'Something went wrong!'
+    })
+    
+  }
+}
+
+
+
+
+
+export const deleteCollections = async (req, res) => {
+
+
+
+  try {
+    const { name, userId } = req.body;
+
+    if (!name || !userId) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Name and userId are required' 
+      });
+    }
+
+    const result = await CollectionName.deleteOne({ 
+      name: name,
+      userId: userId 
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Collection not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Collection deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during deletion',
+      error: error.message
+    });
+  }
+}
