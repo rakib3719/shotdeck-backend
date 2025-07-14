@@ -37,7 +37,8 @@ dotenv.config();
 const connectDB = async () => {
   try {
     const connect = await mongoose.connect(
-      `mongodb://shotdeck:959UI8*(?\\:fedih#@*4JkaK87^%!|33@31.97.156.58:27017`,
+      `mongodb://shotdeck:959UI8*%28%3F%5C%5C%3Afedih%23%40*4JkaK87%5E%25!%7C33@31.97.156.58:27017
+`,
       {
         dbName: 'shotdeck',
       }
