@@ -8,6 +8,54 @@ import { use } from 'react';
 
 
 
+export const updateShot = async (req, res) => {
+  console.log(req.body, 'kuryem er dibbaj');
+
+  try {
+    const data = req.body;
+    const id = req.params.id;
+
+    if (!id) {
+      return res.status(401).json({
+        message: 'Id must be required',
+      });
+    }
+
+    // 🧹 Clean conflicting keys like 'simulatorTypes.particles2' if 'simulatorTypes' exists
+    const cleanedData = { ...data };
+
+    if (cleanedData.simulatorTypes) {
+      Object.keys(cleanedData).forEach((key) => {
+        if (key.startsWith('simulatorTypes.') && key !== 'simulatorTypes') {
+          delete cleanedData[key];
+        }
+      });
+    }
+
+    const updatedShot = await Shot.findByIdAndUpdate(id, cleanedData, {
+      new: true, // return updated doc
+      runValidators: true, // apply schema validation
+    });
+
+    if (!updatedShot) {
+      return res.status(404).json({
+        message: 'Shot not found with the given ID.',
+      });
+    }
+
+    res.status(200).json({
+      message: 'Shot updated successfully.',
+      data: updatedShot,
+    });
+
+  } catch (error) {
+    console.error('Error updating shot:', error.message);
+    res.status(500).json({
+      message: 'Something went wrong!',
+      error: error.message,
+    });
+  }
+};
 
 
 
