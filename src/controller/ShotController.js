@@ -6,7 +6,7 @@ import { User } from '../models/userModel.js';
 import { use } from 'react';
 
 
-
+// sd
 
 export const updateShot = async (req, res) => {
   console.log(req.body, 'kuryem er dibbaj');
