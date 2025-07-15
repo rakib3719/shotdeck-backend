@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createShot, deleteShot, getRequestedShot, getServices, getShot, getShotById, getSingleServices, shotCount, statusChange, trendingShot, updateClick } from "../controller/ShotController.js";
+import { createShot, deleteShot, getRequestedShot, getServices, getShot, getShotById, getSingleServices, shotCount, statusChange, trendingShot, updateClick, updateShot } from "../controller/ShotController.js";
 import { overView } from "../controller/overViewController.js";
 import { createCollection, deleteCollection, getCollection } from "../controller/collectionController.js";
 import { isAdmin, verifyToken } from "../middleware/middleware.js";
@@ -32,9 +32,9 @@ router.delete('/collection/:id', deleteCollection);
 router.patch('/website', updateSetting);
 router.get('/website', getSettings);
 router.get('/shot-count', shotCount);
-router.get('/dlp', getScreenshot)
-router.get('/dlpv', getScreenshotForVimeo )
-
+router.get('/dlp', getScreenshot);
+router.get('/dlpv', getScreenshotForVimeo );
+router.put('/update-shot/:id', updateShot)
 
 
 
