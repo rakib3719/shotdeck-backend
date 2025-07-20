@@ -634,9 +634,37 @@ export const shotCount = async(req, res)=>{
 
 
 
+// Single shot getting
+
+export const getSingleShot = async(req, res)=>{
+
+  try {
+
+    const id = req.params.id;
+    const data = await Shot.findById(id);
+    res.status(201).json({
+      message:'Success',
+      data
+    })
+    
+  } catch (error) {
+    res.status(500).json({
+      message:'Something Went Wrong!',
+      error
+    })
+  }
+}
 
 
+// Update shot
 
+export const updateSingleShot = async(req, res)=>{
+  try {
+    
+  } catch (error) {
+    
+  }
+}
 
 
 
