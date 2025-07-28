@@ -11,6 +11,7 @@ const allowedOrigins = [
   'https://www.fx-references.com',
   'http://www.fx-references.com',
   'http://localhost:3000',
+  'http://localhost:3001',
   'http://31.97.156.58:3000',
   'https://31.97.156.58:3000',
   'http://localhost:3000',
