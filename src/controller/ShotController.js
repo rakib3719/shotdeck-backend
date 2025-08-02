@@ -393,6 +393,10 @@ export const getShot = async (req, res) => {
 
 
 
+    console.log(sortBy, '<----sortBy')
+
+
+
     // Handle sorting
     let query;
     switch (sortBy) {
@@ -962,3 +966,39 @@ export const updateSingleShot = async(req, res)=>{
 //     });
 //   }
 // };
+
+
+
+export const getAllTag = async (req, res) => {
+
+  console.log('hitig the middle')
+  try {
+    const shots = await Shot.find({}, 'tags'); // শুধু tags ফিল্ড নেবো
+
+    const tagMap = new Map();
+
+    // সব tags ঘুরে দেখবো
+    shots.forEach(shot => {
+      shot.tags?.forEach(tag => {
+        if (tagMap.has(tag)) {
+          tagMap.set(tag, tagMap.get(tag) + 1);
+        } else {
+          tagMap.set(tag, 1);
+        }
+      });
+    });
+
+    // ফাইনাল আউটপুট বানাবো
+    const result = Array.from(tagMap.entries()).map(([tag, count]) => ({
+      tag,
+      label: `${tag} (${count})`
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Something Went Wrong!',
+    });
+  }
+};

@@ -8,10 +8,10 @@ import { generateOTP, sendPassword, verifyOtp } from "../utils/utils.js";
 
 export const register = async (req, res) => {
   try {
-    const { email, password, confirmPassword, primaryIndustry, primaryOccupation } = req.body;
+    const { email, password, confirmPassword, primaryIndustry,  } = req.body;
 
 
-    if (!email || !password  || !primaryIndustry || !primaryOccupation) {
+    if (!email || !password  || !primaryIndustry ) {
       return res.status(400).json({
         message: 'All required fields must be provided',
         requiredFields: ['email', 'password', 'confirmPassword', 'primaryIndustry', 'primaryOccupation']
