@@ -8,51 +8,71 @@ import { use } from 'react';
 
 // sd
 
+// Backend API endpoint (Node.js/Express example)
 export const updateShot = async (req, res) => {
-  console.log(req.body, 'kuryem er dibbaj');
-
   try {
     const data = req.body;
+
+
+
+    console.log(data, 'salar kuryem er udpate data')
     const id = req.params.id;
 
     if (!id) {
-      return res.status(401).json({
-        message: 'Id must be required',
+      return res.status(400).json({
+        success: false,
+        message: 'Shot ID is required',
       });
     }
 
-    // 🧹 Clean conflicting keys like 'simulatorTypes.particles2' if 'simulatorTypes' exists
-    const cleanedData = { ...data };
-
-    if (cleanedData.simulatorTypes) {
-      Object.keys(cleanedData).forEach((key) => {
-        if (key.startsWith('simulatorTypes.') && key !== 'simulatorTypes') {
-          delete cleanedData[key];
+    // Clean and validate data
+    const updateData = { ...data };
+    
+    // Handle simulatorTypes if present
+    if (updateData.simulatorTypes) {
+      Object.keys(updateData.simulatorTypes).forEach(key => {
+        if (Array.isArray(updateData.simulatorTypes[key])) {
+          updateData.simulatorTypes[key] = updateData.simulatorTypes[key]
+            .filter(item => item && typeof item === 'string');
         }
       });
     }
 
-    const updatedShot = await Shot.findByIdAndUpdate(id, cleanedData, {
-      new: true, // return updated doc
-      runValidators: true, // apply schema validation
-    });
+    // Handle tags if present
+    if (updateData.tags && !Array.isArray(updateData.tags)) {
+      updateData.tags = [];
+    }
+
+    // Handle timecodes if present
+    if (updateData.timecodes && !Array.isArray(updateData.timecodes)) {
+      updateData.timecodes = [];
+    }
+
+    const updatedShot = await Shot.findByIdAndUpdate(
+      id, 
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
 
     if (!updatedShot) {
       return res.status(404).json({
-        message: 'Shot not found with the given ID.',
+        success: false,
+        message: 'Shot not found',
       });
     }
 
-    res.status(200).json({
-      message: 'Shot updated successfully.',
-      data: updatedShot,
+    return res.status(200).json({
+      success: true,
+      message: 'Shot updated successfully',
+      data: updatedShot
     });
 
   } catch (error) {
-    console.error('Error updating shot:', error.message);
-    res.status(500).json({
-      message: 'Something went wrong!',
-      error: error.message,
+    console.error('Update error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update shot',
+      error: error.message
     });
   }
 };
@@ -312,7 +332,6 @@ export const getShot = async (req, res) => {
     if (gallery) filter.gallery = { $in: parseArrayParam(gallery) };
     if (mediaType) filter.mediaType = { $in: parseArrayParam(mediaType) };
     if (focalLength) filter.focalLength = { $in: parseArrayParam(focalLength) };
-    if (search) filter.tags = { $in: parseArrayParam(search) };
     if (lightingConditions) filter.lightingConditions = { $in: parseArrayParam(lightingConditions) };
     if (videoType) filter.videoType = { $in: parseArrayParam(videoType) };
     if (videoQuality) filter.videoType = { $in: parseArrayParam(videoQuality) };
@@ -371,6 +390,10 @@ export const getShot = async (req, res) => {
     if (crowd) filter['simulatorTypes.crowd'] = { $in: parseArrayParam(crowd) };
     if (mechanicsTech) filter['simulatorTypes.mechanicsTech'] = { $in: parseArrayParam(mechanicsTech) };
     if (compositing) filter['simulatorTypes.compositing'] = { $in: parseArrayParam(compositing) };
+
+
+
+    console.log(sortBy, '<----sortBy')
 
 
 
@@ -943,3 +966,39 @@ export const updateSingleShot = async(req, res)=>{
 //     });
 //   }
 // };
+
+
+
+export const getAllTag = async (req, res) => {
+
+  console.log('hitig the middle')
+  try {
+    const shots = await Shot.find({}, 'tags'); // শুধু tags ফিল্ড নেবো
+
+    const tagMap = new Map();
+
+    // সব tags ঘুরে দেখবো
+    shots.forEach(shot => {
+      shot.tags?.forEach(tag => {
+        if (tagMap.has(tag)) {
+          tagMap.set(tag, tagMap.get(tag) + 1);
+        } else {
+          tagMap.set(tag, 1);
+        }
+      });
+    });
+
+    // ফাইনাল আউটপুট বানাবো
+    const result = Array.from(tagMap.entries()).map(([tag, count]) => ({
+      tag,
+      label: `${tag} (${count})`
+    }));
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Something Went Wrong!',
+    });
+  }
+};

@@ -215,8 +215,10 @@ export const updateUser = async(req, res)=>{
       return res.status(404).json({ message: 'User not found' });
     }
 
-        const {email, name, phone} = req.body;
-        const response = await User.updateOne({_id:findUser._id}, {email:email, name:name, phone:phone || ''});
+        const {email, name, phone , primaryIndustry, primaryOccupation,  others, companyName, schoolName, otherDetails} = req.body;
+
+        console.log(req.body, 'account er kuryem er matha')
+        const response = await User.updateOne({_id:findUser._id}, {email:email, name:name, phone:phone || '', primaryOccupation: primaryOccupation, primaryIndustry: primaryIndustry , others: others, companyName: companyName, schoolName: schoolName, otherDetails: otherDetails});
         res.status(201).json({
             message:'Success',
             data: response

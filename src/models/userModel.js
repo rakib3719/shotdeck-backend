@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
   },
   primaryOccupation: {
     type: String,
-    required: [true, 'Primary occupation is required']
+ 
   },
   companyName: {
     type: String,
@@ -46,6 +46,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+
+  others: [{
+    key: String,
+    value: String
+  }],
+  
+
   otherDetails: {
     type: String,
     trim: true
