@@ -393,7 +393,7 @@ export const getShot = async (req, res) => {
 
 
 
-    console.log(sortBy, '<----sortBy')
+    console.log(sortBy, '<----sortBy haha bandor')
 
 
 
@@ -401,10 +401,10 @@ export const getShot = async (req, res) => {
     let query;
     switch (sortBy) {
       case 'releaseDateDesc':
-        query = Shot.find(filter).sort({ releaseYear: -1 }).skip(skip).limit(limit);
+        query = Shot.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
         break;
       case 'releaseDateAsc':
-        query = Shot.find(filter).sort({ releaseYear: 1 }).skip(skip).limit(limit);
+        query = Shot.find(filter).sort({ createdAt: 1 }).skip(skip).limit(limit);
         break;
       case 'recentlyAdded':
         query = Shot.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
